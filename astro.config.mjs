@@ -2,7 +2,7 @@ import { defineConfig } from 'astro/config';
 
 export default defineConfig({
   output: 'static',
-  base: '/clinical-concept-map',
+  base: '/clinical-concept-map/',
   build: {
     outDir: './dist',
   },

@@ -1,0 +1,692 @@
+---
+import Layout from '../layouts/Layout.astro';
+import TutorialTrigger from '../components/TutorialTrigger.astro';
+import TipBox from '../components/TipBox.astro';
+
+const base = import.meta.env.BASE_URL;
+
+const tabs = [
+  { id: '0', label: 'Patient Info',    icon: '👤' },
+  { id: '1', label: 'Pathophysiology', icon: '🧬' },
+  { id: '2', label: 'Recognize Cues',  icon: '🔍' },
+  { id: '3', label: 'Analyze Cues',    icon: '🧩' },
+  { id: '4', label: 'Prioritize Dx',   icon: '⚖️'  },
+  { id: '5', label: 'Take Actions',    icon: '📋' },
+  { id: '6', label: 'Evaluate',        icon: '✅' },
+  { id: '7', label: 'Reflect',         icon: '💭' },
+];
+---
+<Layout
+  title="Concept Map Builder"
+  description="Interactive 8-tab clinical concept map builder for nursing students. Includes auto-suggestions, ABG interpreter, NANDA diagnosis builder, SMART goal checker, and live print preview."
+>
+  <!-- Page header -->
+  <section style="background:var(--color-primary);color:#fff;padding:2rem 1rem 1.5rem;">
+    <div style="max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
+      <div style="flex:1;min-width:220px;">
+        <p style="font-size:0.75rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-highlight);margin-bottom:0.25rem;">Interactive Tool</p>
+        <h1 style="font-size:clamp(1.4rem,3vw,2rem);margin:0;">Clinical Concept Map Builder</h1>
+        <p style="font-size:0.9rem;color:rgba(255,255,255,0.8);margin-top:0.4rem;">Complete all 8 steps. Auto-saves every 5 seconds. Print anytime.</p>
+      </div>
+      <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
+        <TutorialTrigger tutorialKey="ngn-model" label="NGN Framework" />
+        <button id="print-btn" class="btn" style="background:var(--color-highlight);color:var(--color-primary);font-weight:700;">🖨️ Print / Save PDF</button>
+        <button id="clear-all-btn" class="btn btn-outline" style="border-color:rgba(255,255,255,0.4);color:#fff;font-size:0.85rem;">🗑️ Clear All</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Smart Alerts Bar -->
+  <div id="smart-alerts" style="max-width:1200px;margin:0.75rem auto 0;padding:0 1rem;"></div>
+
+  <!-- Main layout: tabs + preview + sidebar -->
+  <div style="max-width:1200px;margin:0 auto;padding:0.75rem 1rem 3rem;display:grid;grid-template-columns:1fr 320px;gap:1.25rem;align-items:start;" class="builder-grid">
+
+    <!-- LEFT: Tab interface -->
+    <div>
+      <!-- Tab Navigation -->
+      <nav style="display:flex;flex-wrap:wrap;gap:0.3rem;margin-bottom:0;background:#fff;border-radius:8px 8px 0 0;padding:0.6rem 0.6rem 0;box-shadow:0 2px 8px rgba(0,0,0,0.08);border-bottom:2px solid var(--color-primary);">
+        {tabs.map(t => (
+          <button
+            class="builder-tab-btn"
+            data-tab={t.id}
+            style="display:flex;align-items:center;gap:0.3rem;padding:0.45rem 0.8rem;border:none;background:transparent;border-radius:6px 6px 0 0;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:500;color:#555;transition:background 0.15s;"
+          >
+            <span>{t.icon}</span><span class="tab-label">{t.label}</span>
+          </button>
+        ))}
+      </nav>
+
+      <!-- ══════════════════════════════════════════════
+           TAB 0 — Patient Information Header
+      ══════════════════════════════════════════════ -->
+      <div class="builder-tab-content builder-panel" data-tab="0">
+        <h2 class="section-title">👤 Patient Information</h2>
+        <p class="section-desc">Complete this header first. The primary diagnosis drives condition-specific suggestions throughout all tabs.</p>
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label class="form-label" for="pat-name">Patient Name or Initials <span style="color:#999;font-weight:400;">(use initials for privacy)</span></label>
+            <input class="form-input" id="pat-name" type="text" placeholder="e.g., J.D." />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="pat-initials">Student / Faculty ID</label>
+            <input class="form-input" id="pat-initials" type="text" placeholder="Your name or ID" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="pat-date">Date</label>
+            <input class="form-input" id="pat-date" type="date" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="pat-age">Age / Sex</label>
+            <input class="form-input" id="pat-age" type="text" placeholder="e.g., 68F" />
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-top:0.5rem;">
+          <label class="form-label" for="pat-diagnosis">
+            Primary Medical Diagnosis
+            <span style="font-size:0.78rem;font-weight:400;color:#888;">(type here — triggers condition-specific suggestions in all tabs)</span>
+          </label>
+          <input class="form-input" id="pat-diagnosis" type="text" placeholder="e.g., Community-Acquired Pneumonia, CHF, Sepsis, COPD, Parkinson's..." style="font-size:1rem;" />
+          <p style="font-size:0.78rem;color:#888;margin-top:0.3rem;">Suggestions load automatically as you type. Supported: Pneumonia, CHF, Sepsis, COPD, Parkinson's, AKI, DKA, Stroke, MI, PE, and more.</p>
+        </div>
+
+        <div class="form-grid-2" style="margin-top:0.5rem;">
+          <div class="form-group">
+            <label class="form-label" for="pat-room">Care Setting</label>
+            <select class="form-input" id="pat-room">
+              <option value="">Select...</option>
+              <option>Med-Surg</option>
+              <option>ICU / Critical Care</option>
+              <option>Telemetry / Step-Down</option>
+              <option>Emergency Department</option>
+              <option>Progressive Care</option>
+              <option>Pediatrics</option>
+              <option>Obstetrics</option>
+              <option>Post-Surgical / PACU</option>
+              <option>Long-Term Care</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="pat-admission">Admission Reason / Chief Complaint</label>
+            <input class="form-input" id="pat-admission" type="text" placeholder="e.g., Worsening dyspnea × 2 days" />
+          </div>
+        </div>
+
+        <TipBox type="tip" title="Start Here">
+          Type your patient's primary diagnosis in the field above. The suggestion engine will pre-load relevant clinical data into every other tab. You can still customize all suggestions for your specific patient.
+        </TipBox>
+      </div>
+
+      <!-- ══════════════════════════════════════════════
+           TAB 1 — Pathophysiology / Disease Process
+      ══════════════════════════════════════════════ -->
+      <div class="builder-tab-content builder-panel" data-tab="1" style="display:none;">
+        <div style="display:flex;align-items:center;gap:0.6rem;flex-wrap:wrap;margin-bottom:0.25rem;">
+          <h2 class="section-title" style="margin:0;">🧬 Step 1 — Disease Process &amp; Pathophysiology</h2>
+          <TutorialTrigger tutorialKey="pathophysiology-why" label="Why First?" />
+        </div>
+        <p class="section-desc">Explain how the disease mechanism directly causes your patient's presentation. Be specific — not a textbook entry.</p>
+
+        <div class="form-group">
+          <label class="form-label" for="pathophys-text">
+            Pathophysiology
+            <span style="font-size:0.75rem;font-weight:400;color:#888;">— explain the mechanism for YOUR patient</span>
+          </label>
+          <div id="suggestion-pathophys" class="suggestion-panel"></div>
+          <textarea class="form-input" id="pathophys-text" rows="6" placeholder="e.g., Bacterial invasion of alveoli → inflammatory exudate → alveolar consolidation → impaired gas diffusion → V/Q mismatch → hypoxemia. This patient's diabetes delayed neutrophil response, explaining the severity of presentation despite 2-day symptom onset..."></textarea>
+        </div>
+
+        <div class="form-group" style="margin-top:0.75rem;">
+          <label class="form-label" for="riskfactors-text">Risk Factors</label>
+          <div id="suggestion-riskfactors" class="suggestion-panel"></div>
+          <textarea class="form-input" id="riskfactors-text" rows="4" placeholder="List modifiable and non-modifiable risk factors specific to this patient..."></textarea>
+        </div>
+
+        <TipBox type="warning" title="Common Mistake">
+          "Pneumonia is an infection of the lungs" is NOT acceptable pathophysiology. Explain the mechanism: which alveoli, what happens to gas diffusion, why the SpO₂ is at this specific value.
+        </TipBox>
+      </div>
+
+      <!-- ══════════════════════════════════════════════
+           TAB 2 — Recognizing Cues
+      ══════════════════════════════════════════════ -->
+      <div class="builder-tab-content builder-panel" data-tab="2" style="display:none;">
+        <div style="display:flex;align-items:center;gap:0.6rem;flex-wrap:wrap;margin-bottom:0.25rem;">
+          <h2 class="section-title" style="margin:0;">🔍 Step 2 — Recognizing Cues</h2>
+          <TutorialTrigger tutorialKey="objective-vs-subjective" label="Obj vs. Subj Data" />
+          <TutorialTrigger tutorialKey="mar-as-cue" label="Reading the MAR" />
+        </div>
+        <p class="section-desc">Collect all objective and subjective data. Flag abnormal values. Include vital signs, labs, assessment findings, and what the patient reports.</p>
+
+        <!-- Cue Table -->
+        <div style="overflow-x:auto;margin-bottom:0.75rem;">
+          <table id="cue-table" style="width:100%;border-collapse:collapse;font-size:0.88rem;">
+            <thead>
+              <tr style="background:var(--color-primary);color:#fff;">
+                <th style="padding:8px 10px;text-align:left;width:55%;">Cue / Finding</th>
+                <th style="padding:8px 10px;text-align:left;width:18%;">Type</th>
+                <th style="padding:8px 10px;text-align:left;width:15%;">Status</th>
+                <th style="padding:8px 10px;width:12%;"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {[1,2,3,4,5].map(() => (
+                <tr>
+                  <td><input type="text" class="cue-data-input" style="width:100%;padding:5px;border:1px solid #d1d5db;border-radius:4px;" placeholder="Enter finding..." /></td>
+                  <td>
+                    <select class="cue-type-select" style="width:100%;padding:5px;border:1px solid #d1d5db;border-radius:4px;">
+                      <option>Objective</option>
+                      <option>Subjective</option>
+                      <option>Lab</option>
+                      <option>Vital</option>
+                    </select>
+                  </td>
+                  <td class="cue-status" style="font-size:12px;color:#1d4ed8;font-weight:600;">Objective</td>
+                  <td><button class="remove-cue-btn" style="background:#dc2626;color:#fff;border:none;padding:3px 8px;border-radius:3px;cursor:pointer;">✕</button></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <button id="add-cue-row" class="btn btn-accent btn-sm">+ Add Cue Row</button>
+
+        <!-- Suggestions -->
+        <div id="suggestion-cues" class="suggestion-panel" style="margin-top:0.75rem;"></div>
+
+        <!-- Cue summary textarea (for preview) -->
+        <div class="form-group" style="margin-top:0.75rem;">
+          <label class="form-label" for="cues-text">Cue Summary Notes <span style="font-weight:400;font-size:0.75rem;color:#888;">(optional — appears in preview)</span></label>
+          <textarea class="form-input" id="cues-text" rows="3" placeholder="Summarize key patterns: 'Vitals indicate hypoxemia with compensatory tachycardia and tachypnea. Lab findings consistent with bacterial infection...'"></textarea>
+        </div>
+
+        <!-- ABG Interpreter Widget -->
+        <details style="margin-top:1.25rem;border:1px solid #e0e0e0;border-radius:8px;overflow:hidden;">
+          <summary style="padding:0.75rem 1rem;background:#f0f4f8;cursor:pointer;font-weight:600;font-size:0.9rem;display:flex;align-items:center;gap:0.5rem;list-style:none;">
+            🧪 ABG Interpreter (click to expand)
+            <TutorialTrigger tutorialKey="abg-interpretation" label="How to Read ABGs" />
+          </summary>
+          <div style="padding:1rem;background:#fff;">
+            <p style="font-size:0.82rem;color:#555;margin-bottom:0.75rem;">Enter values and click Interpret. Results will explain the primary disturbance, clinical cause, and nursing priority.</p>
+            <div class="form-grid-5">
+              <div class="form-group">
+                <label class="form-label" for="abg-ph">pH <span style="color:#888;font-weight:400;">(7.35-7.45)</span></label>
+                <input class="form-input" id="abg-ph" type="number" step="0.01" min="6.8" max="7.8" placeholder="7.40" />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="abg-paco2">PaCO₂ <span style="color:#888;font-weight:400;">(35-45)</span></label>
+                <input class="form-input" id="abg-paco2" type="number" step="1" placeholder="40" />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="abg-pao2">PaO₂ <span style="color:#888;font-weight:400;">(80-100)</span></label>
+                <input class="form-input" id="abg-pao2" type="number" step="1" placeholder="95" />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="abg-hco3">HCO₃ <span style="color:#888;font-weight:400;">(22-26)</span></label>
+                <input class="form-input" id="abg-hco3" type="number" step="0.1" placeholder="24" />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="abg-o2sat">O₂ Sat%</label>
+                <input class="form-input" id="abg-o2sat" type="number" step="0.1" min="0" max="100" placeholder="98" />
+              </div>
+            </div>
+            <button id="abg-interpret-btn" class="btn btn-primary btn-sm" style="margin-top:0.5rem;">Interpret ABG</button>
+            <div id="abg-result" style="margin-top:0.75rem;"></div>
+          </div>
+        </details>
+
+        <TipBox type="tip" title="Reading the MAR">
+          Every medication on the MAR is a cue. Furosemide → fluid overload. Carbidopa-Levodopa → Parkinson's (timing is critical). Heparin → DVT, PE, or ACS. Held metformin → likely contrast study or renal concern.
+          <TutorialTrigger tutorialKey="mar-as-cue" label="Full MAR Tutorial" />
+        </TipBox>
+      </div>
+
+      <!-- ══════════════════════════════════════════════
+           TAB 3 — Analyzing Cues
+      ══════════════════════════════════════════════ -->
+      <div class="builder-tab-content builder-panel" data-tab="3" style="display:none;">
+        <div style="display:flex;align-items:center;gap:0.6rem;flex-wrap:wrap;margin-bottom:0.25rem;">
+          <h2 class="section-title" style="margin:0;">🧩 Step 2 — Analyzing Cues</h2>
+          <TutorialTrigger tutorialKey="supporting-vs-concerning" label="Supporting vs. Concerning" />
+        </div>
+        <p class="section-desc">Sort your findings into two categories: findings that support your primary diagnosis (expected), and findings that are concerning (unexpected, worsening, or suggest a complication).</p>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;" class="analysis-grid">
+          <div>
+            <div style="background:#e8f5e9;border-left:4px solid #2e7d32;border-radius:6px;padding:0.6rem 0.85rem;margin-bottom:0.5rem;">
+              <p style="font-weight:700;color:#1b5e20;margin:0;font-size:0.9rem;">✅ Supporting Data</p>
+              <p style="font-size:0.75rem;color:#388e3c;margin:0.15rem 0 0;">Expected findings that confirm the primary diagnosis</p>
+            </div>
+            <textarea class="form-input" id="supporting-text" rows="8"
+              placeholder="e.g.:&#10;• SpO₂ 88% — expected with alveolar consolidation&#10;• Productive cough with purulent sputum&#10;• WBC 16,000 — expected leukocytosis&#10;• Crackles RLL — consolidation area&#10;• CXR infiltrate RLL"></textarea>
+          </div>
+          <div>
+            <div style="background:#fbe9e7;border-left:4px solid #c62828;border-radius:6px;padding:0.6rem 0.85rem;margin-bottom:0.5rem;">
+              <p style="font-weight:700;color:#b71c1c;margin:0;font-size:0.9rem;">⚠️ Concerning Data</p>
+              <p style="font-size:0.75rem;color:#d32f2f;margin:0.15rem 0 0;">Unexpected, worsening, or suggesting a complication</p>
+            </div>
+            <textarea class="form-input" id="concerning-text" rows="8"
+              placeholder="e.g.:&#10;• New confusion — not expected for pneumonia alone → consider sepsis or hyponatremia&#10;• BP 88/52 — hypotension → septic shock risk&#10;• Rising creatinine — renal hypoperfusion&#10;• Lactate 2.8 — tissue hypoperfusion"></textarea>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-top:0.75rem;">
+          <label class="form-label" for="pattern-text">Pattern / Clinical Interpretation</label>
+          <textarea class="form-input" id="pattern-text" rows="3"
+            placeholder="What do the findings tell you? e.g., 'Pattern suggests community-acquired pneumonia with early sepsis features — elevated lactate and new confusion are the most concerning because they indicate systemic spread beyond the lungs...'"></textarea>
+        </div>
+
+        <TipBox type="warning" title="Key Insight">
+          A finding can belong in BOTH columns. Elevated WBC in sepsis is supporting (confirms infection) AND concerning (magnitude signals severity). Always note WHY a finding is concerning.
+        </TipBox>
+      </div>
+
+      <!-- ══════════════════════════════════════════════
+           TAB 4 — Prioritizing Hypotheses (NANDA Dx)
+      ══════════════════════════════════════════════ -->
+      <div class="builder-tab-content builder-panel" data-tab="4" style="display:none;">
+        <div style="display:flex;align-items:center;gap:0.6rem;flex-wrap:wrap;margin-bottom:0.25rem;">
+          <h2 class="section-title" style="margin:0;">⚖️ Step 3 — Prioritizing Hypotheses</h2>
+          <TutorialTrigger tutorialKey="abc-priority" label="ABC Priority Framework" />
+          <TutorialTrigger tutorialKey="nanda-format" label="NANDA Format" />
+        </div>
+        <p class="section-desc">Build 3 nursing diagnoses using the correct NANDA 3-part format. Rank by priority using ABC + Maslow. Actual problems rank above risk problems (unless risk is imminent).</p>
+
+        <!-- Suggestion panel -->
+        <div id="suggestion-diagnoses" class="suggestion-panel" style="margin-bottom:0.75rem;"></div>
+
+        <!-- NANDA Diagnosis Builder × 3 -->
+        {[1,2,3].map(i => (
+          <div class="diagnosis-block" style={`border:1px solid #e0e0e0;border-radius:8px;padding:1rem;margin-bottom:1rem;border-left:4px solid var(--color-step-${i});`}>
+            <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.75rem;">
+              <span style={`font-size:0.75rem;font-weight:700;color:#fff;background:var(--color-step-${i});padding:0.2rem 0.6rem;border-radius:4px;`}>Priority #{i}</span>
+              <TutorialTrigger tutorialKey="abc-priority" label={i === 1 ? "Why this is #1?" : "Priority rules"} />
+            </div>
+            <div style="display:grid;grid-template-columns:1fr;gap:0.5rem;">
+              <div class="form-group">
+                <label class="form-label" for={`dx-nanda-${i}`}>NANDA Label (Problem)</label>
+                <select class="form-input" id={`dx-nanda-${i}`} style="font-size:0.9rem;">
+                  <option value="">— Select NANDA diagnosis —</option>
+                </select>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
+                <div class="form-group">
+                  <label class="form-label" for={`dx-rt-${i}`}>Related To (Etiology)</label>
+                  <input class="form-input" id={`dx-rt-${i}`} type="text" placeholder="e.g., alveolar consolidation and V/Q mismatch" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for={`dx-aeb-${i}`}>As Evidenced By (Signs &amp; Symptoms)</label>
+                  <input class="form-input" id={`dx-aeb-${i}`} type="text" placeholder="e.g., SpO₂ 88%, RR 28, patient reports dyspnea" />
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;gap:0.75rem;">
+                <button id={`dx-build-${i}`} class="btn btn-accent btn-sm">Build Statement</button>
+                <div id={`dx-preview-${i}`} style="flex:1;font-size:0.85rem;color:#555;font-style:italic;"></div>
+              </div>
+            </div>
+          </div>
+        ))}
+
+        <!-- Full diagnoses textarea (for preview/print) -->
+        <div class="form-group" style="margin-top:0.5rem;">
+          <label class="form-label" for="diagnoses-text">Additional Nursing Diagnoses <span style="font-weight:400;font-size:0.75rem;color:#888;">(optional free-text)</span></label>
+          <textarea class="form-input" id="diagnoses-text" rows="3" placeholder="List any additional diagnoses not covered by the 3-part builder above..."></textarea>
+        </div>
+
+        <TipBox type="tip" title="NANDA Format Reminder">
+          <strong>[Problem Label]</strong> related to <strong>[etiology/cause]</strong> as evidenced by <strong>[specific findings]</strong>. Never use a medical diagnosis as the problem label.
+        </TipBox>
+      </div>
+
+      <!-- ══════════════════════════════════════════════
+           TAB 5 — Taking Actions / SMART Planning
+      ══════════════════════════════════════════════ -->
+      <div class="builder-tab-content builder-panel" data-tab="5" style="display:none;">
+        <div style="display:flex;align-items:center;gap:0.6rem;flex-wrap:wrap;margin-bottom:0.25rem;">
+          <h2 class="section-title" style="margin:0;">📋 Step 4 — Taking Actions &amp; SMART Planning</h2>
+          <TutorialTrigger tutorialKey="smart-goals" label="SMART Goals" />
+          <TutorialTrigger tutorialKey="medication-high-alert" label="High-Alert Meds" />
+        </div>
+        <p class="section-desc">Write SMART goals from the patient's perspective, then list evidence-based nursing interventions. Check goals with the quality checker.</p>
+
+        <!-- Goals section -->
+        <div style="margin-bottom:1.25rem;">
+          <h3 style="font-size:0.95rem;font-weight:700;color:var(--color-primary);margin-bottom:0.5rem;">SMART Patient Goals <span style="font-weight:400;font-size:0.8rem;color:#666;">(written from patient's perspective — NOT "nurse will...")</span></h3>
+          {['1','2','3'].map(n => (
+            <div class="form-group" style="margin-bottom:0.6rem;">
+              <label class="form-label" for={`goal-${n}`}>Goal for Diagnosis #{n}</label>
+              <textarea class="form-input goal-field" id={`goal-${n}`} rows="2"
+                placeholder="e.g., Patient will maintain O₂ saturation ≥ 95% on 2L NC by end of shift." />
+            </div>
+          ))}
+          <button id="check-goals-btn" class="btn btn-accent btn-sm">🔍 Check SMART Quality</button>
+          <!-- General goals text area for preview -->
+          <div class="form-group" style="margin-top:0.75rem;">
+            <label class="form-label" for="goals-text">Additional Goals / Notes</label>
+            <textarea class="form-input" id="goals-text" rows="2" placeholder="Any additional SMART goals..."></textarea>
+          </div>
+        </div>
+
+        <!-- Interventions section -->
+        <div>
+          <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
+            <h3 style="font-size:0.95rem;font-weight:700;color:var(--color-primary);margin:0;">Nursing Interventions</h3>
+            <TutorialTrigger tutorialKey="fall-risk" label="Fall Prevention" />
+            <TutorialTrigger tutorialKey="orthostatic-hypotension" label="Orthostatic ⚠️" />
+          </div>
+          <div id="suggestion-interventions" class="suggestion-panel" style="margin-bottom:0.5rem;"></div>
+          <textarea class="form-input" id="interventions-text" rows="10"
+            placeholder="List specific, evidence-based interventions. Include:&#10;• Monitoring interventions (what, how often)&#10;• Medication administration (what, route, timing, monitoring parameters)&#10;• Positioning and non-pharmacologic measures&#10;• Patient/family education&#10;• Safety measures&#10;• Consultations (SLP, PT, OT, dietitian)&#10;&#10;Use the suggestion button above if a condition is loaded."></textarea>
+        </div>
+
+        <TipBox type="warning" title="SMART Goals Must Be Patient-Centered">
+          ❌ Wrong: "Nurse will monitor O₂ saturation every 2 hours" → this is an intervention, not a patient goal.<br />
+          ✅ Correct: "Patient will maintain O₂ saturation ≥ 95% on 2L NC by end of shift."
+        </TipBox>
+      </div>
+
+      <!-- ══════════════════════════════════════════════
+           TAB 6 — Evaluating Outcomes
+      ══════════════════════════════════════════════ -->
+      <div class="builder-tab-content builder-panel" data-tab="6" style="display:none;">
+        <div style="display:flex;align-items:center;gap:0.6rem;flex-wrap:wrap;margin-bottom:0.25rem;">
+          <h2 class="section-title" style="margin:0;">✅ Step 5 — Evaluating Outcomes</h2>
+          <TutorialTrigger tutorialKey="evaluation-evidence" label="Writing Evaluations" />
+          <TutorialTrigger tutorialKey="feedback-loop" label="Reassessment Loop" />
+        </div>
+        <p class="section-desc">Document objective, measurable evidence for each goal. Vague statements like "patient improved" are not acceptable. Include specific values and link back to the SMART goal.</p>
+
+        <!-- Evaluation rows for each diagnosis -->
+        {['1','2','3'].map(n => (
+          <div style="border:1px solid #e0e0e0;border-radius:8px;padding:1rem;margin-bottom:1rem;">
+            <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.6rem;flex-wrap:wrap;">
+              <span style="font-weight:700;font-size:0.85rem;color:var(--color-primary);">Goal #{n} Evaluation</span>
+              <select class="form-input" id={`eval-status-${n}`} style="width:auto;padding:0.25rem 0.5rem;font-size:0.85rem;">
+                <option value="">Status...</option>
+                <option value="Met">✅ Met</option>
+                <option value="Partial">🔶 Partially Met</option>
+                <option value="Not Met">❌ Not Met</option>
+              </select>
+            </div>
+            <textarea class="form-input eval-field" id={`eval-${n}`} rows="3"
+              placeholder={`e.g., Patient's O₂ saturation increased from 88% to 94% on 2L NC following repositioning and nebulizer treatment. RR decreased from 28 to 20. Patient denies shortness of breath at rest. Goal #${n} met.`} />
+            <div class="form-group" style="margin-top:0.5rem;">
+              <label class="form-label" for={`revised-plan-${n}`} style="font-size:0.8rem;">Revised Plan (if Not Met)</label>
+              <textarea class="form-input revised-plan-field" id={`revised-plan-${n}`} rows="2"
+                placeholder="If goal not met: What changed? Why not met? What would you revise?" />
+            </div>
+          </div>
+        ))}
+
+        <div class="form-group">
+          <label class="form-label" for="evaluations-text">Additional Evaluation Notes</label>
+          <div id="suggestion-evaluations" class="suggestion-panel"></div>
+          <textarea class="form-input" id="evaluations-text" rows="3" placeholder="Any additional evaluation findings or overall patient response to plan of care..."></textarea>
+        </div>
+
+        <button id="check-evals-btn" class="btn btn-accent btn-sm">🔍 Check Evaluation Quality</button>
+
+        <TipBox type="critical" title="Evaluation Must Be Measurable">
+          ❌ "Patient improved." — unacceptable<br />
+          ❌ "Goal met, patient tolerated care." — unacceptable<br />
+          ✅ "O₂ saturation increased from 88% → 94% after repositioning + nebulizer. RR 20. Patient denies dyspnea at rest." ← Acceptable
+        </TipBox>
+      </div>
+
+      <!-- ══════════════════════════════════════════════
+           TAB 7 — Reflection
+      ══════════════════════════════════════════════ -->
+      <div class="builder-tab-content builder-panel" data-tab="7" style="display:none;">
+        <div style="display:flex;align-items:center;gap:0.6rem;flex-wrap:wrap;margin-bottom:0.25rem;">
+          <h2 class="section-title" style="margin:0;">💭 Step 6 — Reflection</h2>
+          <TutorialTrigger tutorialKey="feedback-loop" label="Reassessment Loop" />
+        </div>
+        <p class="section-desc">Reflection is how clinical judgment deepens with experience. Answer these prompts honestly — they often reveal the most valuable learning.</p>
+
+        <div class="form-group">
+          <label class="form-label" for="reflect-priority">Why did you choose your #1 priority nursing diagnosis?</label>
+          <textarea class="form-input" id="reflect-priority" rows="3"
+            placeholder="Explain your reasoning using ABC, Maslow, and actual vs. risk problem principles..."></textarea>
+        </div>
+
+        <div class="form-group" style="margin-top:0.75rem;">
+          <label class="form-label" for="reflect-missed">What data was most surprising or that you almost missed?</label>
+          <textarea class="form-input" id="reflect-missed" rows="3"
+            placeholder="Were there subtle cues? An atypical presentation? A MAR entry that turned out to be significant?"></textarea>
+        </div>
+
+        <div class="form-group" style="margin-top:0.75rem;">
+          <label class="form-label" for="reflect-change">If you had to revise the plan, what would you change and why?</label>
+          <textarea class="form-input" id="reflect-change" rows="3"
+            placeholder="Did goals need to be revised? Were interventions effective? What would you do differently?"></textarea>
+        </div>
+
+        <div class="form-group" style="margin-top:0.75rem;">
+          <label class="form-label" for="reflect-learning">What is your most important learning from this case?</label>
+          <textarea class="form-input" id="reflect-learning" rows="3"
+            placeholder="What concept or skill are you taking away from completing this concept map?"></textarea>
+        </div>
+
+        <TipBox type="tip" title="The Feedback Loop">
+          After evaluating outcomes, reassessment loops back to recognizing cues. Ask: are there new cues now? Has the priority shifted? In real practice, the concept map is a living document that updates with every reassessment.
+          <TutorialTrigger tutorialKey="feedback-loop" label="Full Feedback Loop Tutorial" />
+        </TipBox>
+      </div>
+    </div>
+
+    <!-- RIGHT: Live Preview + Knowledge Panel -->
+    <div class="builder-sidebar">
+
+      <!-- Live Preview -->
+      <div class="card" style="margin-bottom:1rem;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;">
+          <h3 style="font-size:0.9rem;font-weight:700;color:var(--color-primary);margin:0;">📄 Live Preview</h3>
+          <button id="print-btn-2" class="btn btn-primary btn-sm">🖨️ Print</button>
+        </div>
+        <div id="live-preview" style="font-size:0.82rem;max-height:320px;overflow-y:auto;border:1px solid #e0e0e0;border-radius:6px;padding:0.75rem;background:#fafafa;color:#333;">
+          <p style="color:#aaa;text-align:center;padding:1rem 0;">Fill in the tabs — preview appears here.</p>
+        </div>
+      </div>
+
+      <!-- Knowledge Panel: Normal Lab Ranges -->
+      <details open class="card" style="padding:0;overflow:hidden;">
+        <summary style="padding:0.75rem 1rem;background:var(--color-primary);color:#fff;cursor:pointer;font-weight:700;font-size:0.88rem;list-style:none;display:flex;align-items:center;justify-content:space-between;">
+          <span>🔬 Normal Lab Reference</span>
+          <span style="font-size:0.75rem;font-weight:400;">click to collapse</span>
+        </summary>
+        <div style="padding:0.75rem;font-size:0.78rem;max-height:600px;overflow-y:auto;">
+
+          <!-- Vitals -->
+          <p style="font-weight:700;color:var(--color-primary);margin:0 0 0.3rem;font-size:0.8rem;">VITALS</p>
+          <table class="ref-table">
+            <tr><td>Blood Pressure</td><td class="val">&lt;130/80 mmHg</td></tr>
+            <tr><td>Heart Rate</td><td class="val">60–100 bpm</td></tr>
+            <tr><td>RR</td><td class="val">12–20 /min</td></tr>
+            <tr><td>Temp</td><td class="val">97–99°F (36.1–37.2°C)</td></tr>
+            <tr><td>SpO₂</td><td class="val">≥95% (COPD: 88–92%)</td></tr>
+            <tr><td>MAP</td><td class="val">70–100 mmHg</td></tr>
+          </table>
+
+          <!-- CBC -->
+          <p style="font-weight:700;color:var(--color-primary);margin:0.75rem 0 0.3rem;font-size:0.8rem;">CBC</p>
+          <table class="ref-table">
+            <tr><td>WBC</td><td class="val">4.5–11.0 ×10³/µL</td></tr>
+            <tr><td>Hemoglobin</td><td class="val">M: 13.5–17.5 | F: 12–15.5 g/dL</td></tr>
+            <tr><td>Hematocrit</td><td class="val">M: 41–53% | F: 36–46%</td></tr>
+            <tr><td>Platelets</td><td class="val">150K–400K/µL</td></tr>
+            <tr><td>MCV</td><td class="val">80–100 fL</td></tr>
+          </table>
+
+          <!-- CMP -->
+          <p style="font-weight:700;color:var(--color-primary);margin:0.75rem 0 0.3rem;font-size:0.8rem;">CMP / ELECTROLYTES</p>
+          <table class="ref-table">
+            <tr><td>Sodium</td><td class="val">135–145 mEq/L</td></tr>
+            <tr><td>Potassium</td><td class="val">3.5–5.0 mEq/L</td></tr>
+            <tr><td>Chloride</td><td class="val">96–106 mEq/L</td></tr>
+            <tr><td>CO₂/Bicarb</td><td class="val">22–29 mEq/L</td></tr>
+            <tr><td>BUN</td><td class="val">7–20 mg/dL</td></tr>
+            <tr><td>Creatinine</td><td class="val">0.6–1.2 mg/dL</td></tr>
+            <tr><td>Glucose</td><td class="val">70–100 mg/dL (fasting)</td></tr>
+            <tr><td>Calcium</td><td class="val">8.5–10.5 mg/dL</td></tr>
+            <tr><td>Magnesium</td><td class="val">1.7–2.2 mg/dL</td></tr>
+            <tr><td>Albumin</td><td class="val">3.5–5.0 g/dL</td></tr>
+            <tr><td>eGFR</td><td class="val">&gt;60 mL/min/1.73m²</td></tr>
+          </table>
+
+          <!-- LFTs -->
+          <p style="font-weight:700;color:var(--color-primary);margin:0.75rem 0 0.3rem;font-size:0.8rem;">LIVER FUNCTION</p>
+          <table class="ref-table">
+            <tr><td>AST</td><td class="val">10–40 U/L</td></tr>
+            <tr><td>ALT</td><td class="val">7–56 U/L</td></tr>
+            <tr><td>ALP</td><td class="val">44–147 U/L</td></tr>
+            <tr><td>Bilirubin (total)</td><td class="val">0.1–1.2 mg/dL</td></tr>
+          </table>
+
+          <!-- ABG -->
+          <p style="font-weight:700;color:var(--color-primary);margin:0.75rem 0 0.3rem;font-size:0.8rem;">ABG</p>
+          <table class="ref-table">
+            <tr><td>pH</td><td class="val">7.35–7.45</td></tr>
+            <tr><td>PaCO₂</td><td class="val">35–45 mmHg</td></tr>
+            <tr><td>PaO₂</td><td class="val">80–100 mmHg</td></tr>
+            <tr><td>HCO₃</td><td class="val">22–26 mEq/L</td></tr>
+            <tr><td>O₂ Sat</td><td class="val">95–100%</td></tr>
+          </table>
+
+          <!-- Cardiac -->
+          <p style="font-weight:700;color:var(--color-primary);margin:0.75rem 0 0.3rem;font-size:0.8rem;">CARDIAC MARKERS</p>
+          <table class="ref-table">
+            <tr><td>Troponin I</td><td class="val">&lt;0.04 ng/mL</td></tr>
+            <tr><td>BNP</td><td class="val">&lt;100 pg/mL</td></tr>
+            <tr><td>NT-proBNP</td><td class="val">&lt;300 pg/mL</td></tr>
+          </table>
+
+          <!-- Coag -->
+          <p style="font-weight:700;color:var(--color-primary);margin:0.75rem 0 0.3rem;font-size:0.8rem;">COAGULATION</p>
+          <table class="ref-table">
+            <tr><td>PT</td><td class="val">11–13.5 sec</td></tr>
+            <tr><td>INR</td><td class="val">0.8–1.1 (therapeutic 2–3)</td></tr>
+            <tr><td>aPTT</td><td class="val">25–35 sec</td></tr>
+            <tr><td>Anti-Xa (LMWH)</td><td class="val">0.6–1.0 IU/mL</td></tr>
+          </table>
+
+          <!-- Other -->
+          <p style="font-weight:700;color:var(--color-primary);margin:0.75rem 0 0.3rem;font-size:0.8rem;">OTHER</p>
+          <table class="ref-table">
+            <tr><td>Lactate</td><td class="val">0.5–2.0 mmol/L</td></tr>
+            <tr><td>HbA1c</td><td class="val">&lt;5.7% normal; &lt;7% DM goal</td></tr>
+            <tr><td>D-Dimer</td><td class="val">&lt;0.50 µg/mL</td></tr>
+            <tr><td>TSH</td><td class="val">0.4–4.0 mIU/L</td></tr>
+            <tr><td>CRP</td><td class="val">&lt;1.0 mg/L (high sens)</td></tr>
+            <tr><td>ESR</td><td class="val">M: 0–20 | F: 0–30 mm/hr</td></tr>
+            <tr><td>BUN/Cr ratio</td><td class="val">10:1–20:1</td></tr>
+          </table>
+
+          <p style="font-size:0.7rem;color:#aaa;margin-top:0.75rem;font-style:italic;">Reference ranges may vary by lab. Always compare to your institution's reference range.</p>
+        </div>
+      </details>
+
+    </div>
+  </div>
+
+  <!-- Print-only area -->
+  <div id="print-area" class="print-only" style="display:none;"></div>
+
+  <!-- Load scripts -->
+  <script is:inline src={`${base}scripts/clinical-data.js`}></script>
+  <script is:inline src={`${base}scripts/builder.js`}></script>
+
+  <style>
+    /* Builder layout */
+    .builder-panel {
+      background: #fff;
+      border-radius: 0 0 8px 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      padding: 1.5rem;
+    }
+
+    .section-title {
+      font-size: 1.1rem;
+      color: var(--color-primary);
+      margin-bottom: 0.25rem;
+    }
+    .section-desc {
+      font-size: 0.85rem;
+      color: #666;
+      margin-bottom: 1rem;
+      line-height: 1.5;
+    }
+
+    /* Tab active state */
+    .builder-tab-btn.active {
+      background: var(--color-primary) !important;
+      color: #fff !important;
+      font-weight: 700 !important;
+    }
+
+    /* Form controls */
+    .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+    .form-grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.5rem; }
+    .form-group { display: flex; flex-direction: column; }
+    .form-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 0.25rem;
+    }
+    .form-input {
+      width: 100%;
+      padding: 0.5rem 0.65rem;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.88rem;
+      color: #111827;
+      background: #fff;
+      transition: border-color 0.15s;
+      resize: vertical;
+    }
+    .form-input:focus { outline: none; border-color: var(--color-accent); box-shadow: 0 0 0 2px rgba(46,134,171,0.15); }
+
+    /* Suggestion panel */
+    .suggestion-panel {
+      background: #f0f9ff;
+      border: 1px solid #bae6fd;
+      border-radius: 6px;
+      padding: 0.5rem 0.75rem;
+      margin-bottom: 0.5rem;
+      min-height: 0;
+      font-size: 0.82rem;
+    }
+    .suggestion-panel:empty { display: none; }
+
+    /* Reference table */
+    .ref-table { width: 100%; border-collapse: collapse; }
+    .ref-table tr { border-bottom: 1px solid #f0f0f0; }
+    .ref-table td { padding: 3px 4px; font-size: 0.75rem; }
+    .ref-table td.val { text-align: right; color: var(--color-primary); font-weight: 600; }
+
+    /* Builder sidebar */
+    .builder-sidebar { position: sticky; top: 80px; }
+
+    /* Responsive: stack on mobile */
+    @media (max-width: 900px) {
+      .builder-grid { grid-template-columns: 1fr !important; }
+      .builder-sidebar { position: static; }
+      .form-grid-2 { grid-template-columns: 1fr; }
+      .form-grid-5 { grid-template-columns: repeat(2, 1fr); }
+      .tab-label { display: none; }
+      .analysis-grid { grid-template-columns: 1fr !important; }
+    }
+
+    @media print {
+      .builder-sidebar, .builder-tab-btn, nav, #smart-alerts, details > *:not(.print-content) { display: none !important; }
+      .builder-panel { box-shadow: none; border: 1px solid #ddd; }
+    }
+  </style>
+
+  <script is:inline>
+    // Wire up the second print button
+    document.getElementById('print-btn-2')?.addEventListener('click', () => window.print());
+  </script>
+</Layout>
