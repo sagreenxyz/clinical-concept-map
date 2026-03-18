@@ -1,0 +1,224 @@
+---
+import CaseStudyLayout from '../../layouts/CaseStudyLayout.astro';
+import TutorialTrigger from '../../components/TutorialTrigger.astro';
+import TipBox from '../../components/TipBox.astro';
+import DiagnosisBlock from '../../components/DiagnosisBlock.astro';
+import DataTable from '../../components/DataTable.astro';
+
+const patient = {
+  initials: 'R.M.',
+  age: 72,
+  sex: 'Male',
+  admitDx: 'Acute Decompensated Heart Failure (ADHF)',
+  hpi: '72-year-old male with chronic systolic HF (EF 30%) presents with 1-week history of progressive dyspnea, orthopnea requiring 3 pillows, bilateral ankle swelling, and weight gain of 8 lbs in 5 days. Reports dietary indiscretion (sodium intake over holidays). SpO₂ 91% on 2L NC.',
+  pmh: ['Chronic Systolic Heart Failure (EF 30%)', 'Coronary Artery Disease (3-vessel, CABG 2018)', 'Atrial Fibrillation (on anticoagulation)', 'Type 2 Diabetes Mellitus', 'Chronic Kidney Disease Stage 3a'],
+  meds: ['Carvedilol 25 mg BID', 'Lisinopril 20 mg daily', 'Furosemide 80 mg daily (DOSE HELD — subtherapeutic)', 'Spironolactone 25 mg daily', 'Apixaban 5 mg BID', 'Metformin 500 mg BID (HELD)', 'Atorvastatin 40 mg nightly'],
+  allergies: 'Sulfa drugs (rash) — note: loop diuretics (bumetanide) are acceptable; thiazides are NOT',
+  vitals: {
+    'BP': '158/96 mmHg',
+    'HR': '88 bpm (irregular, Afib)',
+    'RR': '22 breaths/min',
+    'Temp': '98.4°F',
+    'SpO₂': '91% on 2L NC',
+    'Weight': '198 lbs (baseline 190)',
+  },
+};
+
+const cues = [
+  { finding: 'SpO₂', type: 'Vital', value: '91% on 2L NC', normalRange: '≥95%', status: 'Abnormal' },
+  { finding: 'Weight', type: 'Objective', value: '198 lbs (up 8 lbs in 5 days)', normalRange: 'Baseline 190 lbs', status: 'Critical' },
+  { finding: 'BNP', type: 'Lab', value: '1,240 pg/mL', normalRange: '<100 pg/mL', status: 'Critical' },
+  { finding: 'Bilateral pitting edema', type: 'Objective', value: '+3, ankles to mid-calf', normalRange: 'None', status: 'Abnormal' },
+  { finding: 'Creatinine', type: 'Lab', value: '1.8 mg/dL (baseline 1.4)', normalRange: '0.6–1.2 mg/dL', status: 'Abnormal' },
+  { finding: 'BUN', type: 'Lab', value: '32 mg/dL', normalRange: '7–20 mg/dL', status: 'Abnormal' },
+  { finding: 'Sodium', type: 'Lab', value: '131 mEq/L', normalRange: '135–145 mEq/L', status: 'Abnormal' },
+  { finding: 'Orthopnea', type: 'Subjective', value: 'Requires 3 pillows; "can\'t breathe lying flat"', normalRange: '—', status: 'Concerning' },
+  { finding: 'Jugular venous distension', type: 'Objective', value: 'JVD at 45° — elevated', normalRange: 'Not visible at 45°', status: 'Abnormal' },
+  { finding: 'Heart rate rhythm', type: 'Vital', value: '88 bpm, irregularly irregular', normalRange: '60–100 regular', status: 'Concerning' },
+] as any[];
+---
+<CaseStudyLayout
+  title="Acute Decompensated Heart Failure (CHF)"
+  description="Complete nursing concept map for a 72-year-old male with acute decompensated heart failure — excess fluid volume, decreased cardiac output, activity intolerance."
+  patient={patient}
+>
+  <section class="case-section card fade-in">
+    <div class="step-header" style="border-color:var(--color-step-1);">
+      <span class="step-badge" style="background:var(--color-step-1);">1</span>
+      <h2>Disease Process & Pathophysiology</h2>
+      <TutorialTrigger tutorialKey="pathophysiology-why" label="Why Pathophysiology First?" />
+    </div>
+    <h3>Mechanism</h3>
+    <p>In systolic heart failure (reduced EF), the left ventricle cannot generate adequate stroke volume. In R.M.'s case (EF 30%), the compensatory mechanisms that have maintained relative stability are now overwhelmed:</p>
+    <ul>
+      <li><strong>Reduced CO → neurohormonal activation:</strong> RAAS and SNS activate → vasoconstriction + sodium/water retention → increased preload and afterload → further reduces a failing ventricle's output</li>
+      <li><strong>Fluid overload → pulmonary congestion:</strong> Elevated LVEDP → increased pulmonary capillary wedge pressure → fluid transudation into alveoli → V/Q mismatch → hypoxemia</li>
+      <li><strong>Fluid overload → systemic edema:</strong> Elevated right-sided pressures → fluid into interstitial spaces → bilateral pitting edema</li>
+      <li><strong>Decompensation trigger:</strong> Dietary sodium indiscretion → free water follows sodium → volume expansion → acute decompensation in an already-compensated failing heart</li>
+    </ul>
+    <h3 style="margin-top:1rem;">Patient-Specific Modifiers</h3>
+    <p>Atrial fibrillation removes the "atrial kick" (20–30% of CO contribution) — worsens output in an already-reduced EF. CKD stage 3a limits diuretic responsiveness and complicates fluid management. Pre-existing CAD with prior CABG means ongoing ischemic risk if myocardial demand exceeds supply.</p>
+    <div style="margin-top:1rem;">
+      <TipBox type="warning" title="MAR Clinical Cue — Critical">
+        Furosemide 80 mg is ordered but listed as HELD — this is the primary decompensation driver alongside dietary indiscretion. BNP 1,240 confirms severe fluid overload. Apixaban (Afib anticoagulation) = bleeding precautions required. Metformin HELD = contrast study likely ordered or renal concern.
+        <TutorialTrigger tutorialKey="mar-as-cue" label="Reading the MAR" />
+      </TipBox>
+    </div>
+  </section>
+
+  <section class="case-section card fade-in">
+    <div class="step-header" style="border-color:var(--color-step-2);">
+      <span class="step-badge" style="background:var(--color-step-2);">2</span>
+      <h2>Recognizing Cues</h2>
+      <TutorialTrigger tutorialKey="objective-vs-subjective" label="Objective vs. Subjective" />
+    </div>
+    <DataTable rows={cues} />
+  </section>
+
+  <section class="case-section card fade-in">
+    <div class="step-header" style="border-color:var(--color-step-3);">
+      <span class="step-badge" style="background:var(--color-step-3);">3</span>
+      <h2>Analyzing Cues</h2>
+      <TutorialTrigger tutorialKey="supporting-vs-concerning" label="Supporting vs. Concerning" />
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+      <div>
+        <h3 style="color:var(--color-step-4);">✓ Supporting Data</h3>
+        <ul style="font-size:0.9rem;line-height:1.8;padding-left:1.2rem;">
+          <li>+3 pitting edema — expected fluid overload manifestation</li>
+          <li>BNP 1,240 — confirms cardiac wall stress from fluid overload</li>
+          <li>Orthopnea — pulmonary congestion in dependent position</li>
+          <li>JVD — elevated venous pressure from right-sided backup</li>
+          <li>8 lb weight gain — fluid retention (1L fluid ≈ 2.2 lbs)</li>
+          <li>SpO₂ 91% — pulmonary congestion causing mild hypoxemia</li>
+        </ul>
+      </div>
+      <div>
+        <h3 style="color:var(--color-critical);">⚠ Concerning Data</h3>
+        <ul style="font-size:0.9rem;line-height:1.8;padding-left:1.2rem;">
+          <li>Creatinine 1.8 (up from 1.4) — cardiorenal syndrome developing</li>
+          <li>Sodium 131 — hyponatremia (dilutional); CNS risk if drops further</li>
+          <li>BUN 32 + Cr 1.8 = BUN/Cr ratio ~18 — borderline pre-renal</li>
+          <li>Afib with irregularly irregular rhythm — hemodynamic impact</li>
+          <li>SpO₂ declining despite 2L NC — may need escalation</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="case-section card fade-in">
+    <div class="step-header" style="border-color:var(--color-step-4);">
+      <span class="step-badge" style="background:var(--color-step-4);">4</span>
+      <h2>Prioritizing Hypotheses & Taking Actions</h2>
+      <TutorialTrigger tutorialKey="abc-priority" label="ABC Priority" />
+      <TutorialTrigger tutorialKey="nanda-format" label="NANDA Format" />
+    </div>
+
+    <DiagnosisBlock
+      priority={1}
+      nanda="Excess Fluid Volume"
+      relatedTo="compromised cardiac regulatory mechanisms (EF 30%) and dietary sodium excess leading to fluid retention"
+      aeb="BNP 1,240, weight gain 8 lbs in 5 days, +3 pitting edema bilateral ankles to mid-calf, JVD, creatinine rising to 1.8, sodium 131, orthopnea requiring 3 pillows"
+      color="var(--color-step-1)"
+    >
+      <h4 style="margin:0.75rem 0 0.4rem;color:var(--color-primary);">SMART Goal</h4>
+      <p style="font-size:0.9rem;background:#f0f9f0;padding:0.6rem 0.8rem;border-radius:6px;">Patient will demonstrate diuresis of ≥1,000 mL net negative fluid balance over 24 hours as evidenced by urine output >30 mL/hr, daily weight decrease ≥1 kg, and improvement in peripheral edema from +3 to +1 within 48 hours.</p>
+      <h4 style="margin:0.75rem 0 0.4rem;color:var(--color-primary);">Interventions</h4>
+      <ol style="font-size:0.9rem;line-height:1.9;padding-left:1.2rem;">
+        <li>Administer IV furosemide as ordered (note sulfa allergy — bumetanide is acceptable alternative if needed)</li>
+        <li>Monitor I&O hourly; Foley catheter for accurate urine measurement during active diuresis</li>
+        <li>Daily weights at same time, same scale, same clothing — weight is the most sensitive fluid balance indicator</li>
+        <li>Monitor BMP q6h during active diuresis — watch potassium (furosemide is potassium-wasting); replace per protocol</li>
+        <li>Monitor creatinine daily — aggressive diuresis in CKD risks pre-renal azotemia; report rising Cr to provider</li>
+        <li>Restrict fluid intake per order (typically 1,500 mL/day); low-sodium diet (2g/day) education</li>
+        <li>Elevate bilateral lower extremities 15–30° to facilitate venous return</li>
+      </ol>
+    </DiagnosisBlock>
+
+    <DiagnosisBlock
+      priority={2}
+      nanda="Decreased Cardiac Output"
+      relatedTo="altered heart rate/rhythm (Afib) and mechanical dysfunction from reduced ejection fraction (30%)"
+      aeb="HR 88 irregularly irregular, SpO₂ 91% on 2L NC, BNP 1,240, fatigue, decreased activity tolerance, EF 30%"
+      color="var(--color-step-2)"
+    >
+      <h4 style="margin:0.75rem 0 0.4rem;color:var(--color-primary);">SMART Goal</h4>
+      <p style="font-size:0.9rem;background:#f0f9f0;padding:0.6rem 0.8rem;border-radius:6px;">Patient will maintain MAP ≥65 mmHg, SpO₂ ≥93%, and HR 60–100 without new symptoms of reduced perfusion (confusion, oliguria, cool/mottled extremities) throughout hospitalization.</p>
+      <h4 style="margin:0.75rem 0 0.4rem;color:var(--color-primary);">Interventions</h4>
+      <ol style="font-size:0.9rem;line-height:1.9;padding-left:1.2rem;">
+        <li>Continuous cardiac monitoring — identify rate or rhythm changes; Afib with RVR (HR >100) worsens cardiac output</li>
+        <li>Administer carvedilol as ordered for rate control; hold if HR &lt;55 or SBP &lt;90</li>
+        <li>Assess for signs of end-organ hypoperfusion q4h: cap refill, mental status, skin temperature, urine output</li>
+        <li>Maintain 2L NC and titrate to SpO₂ ≥93%; wean as tolerated with diuresis</li>
+        <li>Ensure Apixaban is administered on time — Afib + CHF = high thromboembolic risk; use bleeding precautions</li>
+        <li>Position HOB 30–45° to reduce preload and work of breathing</li>
+      </ol>
+    </DiagnosisBlock>
+
+    <DiagnosisBlock
+      priority={3}
+      nanda="Activity Intolerance"
+      relatedTo="imbalance between oxygen supply and demand secondary to decreased cardiac output and pulmonary congestion"
+      aeb="reports dyspnea at rest (2/10) worsening to 7/10 with minimal activity; unable to perform basic ADLs without O₂ desaturation below 90%"
+      color="var(--color-step-3)"
+    >
+      <h4 style="margin:0.75rem 0 0.4rem;color:var(--color-primary);">SMART Goal</h4>
+      <p style="font-size:0.9rem;background:#f0f9f0;padding:0.6rem 0.8rem;border-radius:6px;">Patient will tolerate ambulation to bathroom (approximately 20 feet) without SpO₂ dropping below 90% or reporting dyspnea greater than 4/10 within 48 hours as diuresis takes effect.</p>
+      <h4 style="margin:0.75rem 0 0.4rem;color:var(--color-primary);">Interventions</h4>
+      <ol style="font-size:0.9rem;line-height:1.9;padding-left:1.2rem;">
+        <li>Assess exercise tolerance q8h using Borg dyspnea scale; document response to all activities</li>
+        <li>Assist with all ADLs; minimize unnecessary exertion until fluid status improves</li>
+        <li>Cluster nursing activities to maximize rest intervals ≥90 minutes</li>
+        <li>Provide bedside commode to eliminate exertion of walking to bathroom initially</li>
+        <li>Monitor HR and SpO₂ before, during, and after activity; stop and return patient to rest if SpO₂ &lt;90%</li>
+      </ol>
+    </DiagnosisBlock>
+  </section>
+
+  <section class="case-section card fade-in">
+    <div class="step-header" style="border-color:var(--color-step-5);">
+      <span class="step-badge" style="background:var(--color-step-5);">5</span>
+      <h2>Evaluating Outcomes</h2>
+      <TutorialTrigger tutorialKey="evaluation-evidence" label="Objective Evaluations" />
+      <TutorialTrigger tutorialKey="feedback-loop" label="Reassessment Loop" />
+    </div>
+    <div style="display:grid;gap:1rem;">
+      <div class="eval-block" style="border-left:4px solid var(--color-step-4);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+          <strong>Dx 1: Excess Fluid Volume</strong>
+          <span class="eval-badge partial">Partially Met</span>
+        </div>
+        <p style="font-size:0.9rem;color:#444;">Urine output 1,200 mL over 8 hours post-diuretic. Net fluid balance: −800 mL at 1600. Weight: 196.5 lbs (down 1.5 lbs from 198). Edema still +2 at ankles. Potassium: 3.3 (trending down — ordered replacement 40 mEq PO). Continue monitoring and diuresis — goal remains −1,000 mL/24h.</p>
+      </div>
+      <div class="eval-block" style="border-left:4px solid var(--color-step-4);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+          <strong>Dx 2: Decreased Cardiac Output</strong>
+          <span class="eval-badge met">Met — Maintained</span>
+        </div>
+        <p style="font-size:0.9rem;color:#444;">MAP 75 throughout shift. SpO₂ 93% on 2L NC (improved from 91%). HR 84 — remains irregular but rate controlled. No signs of end-organ hypoperfusion: patient oriented, cap refill &lt;2 sec, urine output maintained. Carvedilol administered as ordered.</p>
+      </div>
+      <div class="eval-block" style="border-left:4px solid var(--color-step-4);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+          <strong>Dx 3: Activity Intolerance</strong>
+          <span class="eval-badge notmet">Not Yet Met — Plan Revised</span>
+        </div>
+        <p style="font-size:0.9rem;color:#444;">Patient transferred to BSC twice without significant desaturation (SpO₂ 91% minimum during transfer). Not yet able to ambulate 20 feet — goal revised: achieve BSC transfers with SpO₂ ≥90% today; reassess ambulation goal at 48-hour mark as diuresis continues.</p>
+      </div>
+    </div>
+  </section>
+
+  <style>
+    .case-section { margin-bottom: 1.75rem; }
+    .step-header { display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;margin-bottom:1rem;padding-bottom:0.75rem;border-bottom:2px solid; }
+    .step-header h2 { font-size:1.2rem;color:var(--color-primary);flex:1;min-width:150px; }
+    .step-badge { width:32px;height:32px;border-radius:50%;color:#fff;font-weight:700;font-size:0.95rem;display:flex;align-items:center;justify-content:center;flex-shrink:0; }
+    h3 { color:var(--color-primary);font-size:1rem;margin-bottom:0.5rem; }
+    ul, ol { padding-left:1.5rem;line-height:1.8;color:#444;font-size:0.92rem; }
+    h4 { font-size:0.95rem; }
+    .eval-block { background:#fafafa;border-radius:6px;padding:0.9rem 1rem; }
+    .eval-badge { font-size:0.75rem;font-weight:700;padding:0.2rem 0.7rem;border-radius:12px; }
+    .eval-badge.met { background:#27AE60;color:#fff; }
+    .eval-badge.partial { background:var(--color-warning);color:#fff; }
+    .eval-badge.notmet { background:var(--color-critical);color:#fff; }
+  </style>
+</CaseStudyLayout>

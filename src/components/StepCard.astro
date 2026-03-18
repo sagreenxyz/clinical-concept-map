@@ -1,0 +1,44 @@
+---
+/**
+ * StepCard.astro - 5-step concept map step card
+ * Props:
+ *   stepNumber: number (1-5)
+ *   title: string
+ *   description: string
+ *   color: string (CSS color)
+ *   icon: string (emoji)
+ */
+interface Props {
+  stepNumber: number;
+  title: string;
+  description: string;
+  color?: string;
+  icon?: string;
+}
+const { stepNumber, title, description, color = 'var(--color-accent)', icon = '📋' } = Astro.props;
+---
+<div class="step-card card fade-in" style={`border-top: 4px solid ${color};`}>
+  <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
+    <div class="step-badge" style={`background:${color};`}>{stepNumber}</div>
+    <span style="font-size:1.4rem;">{icon}</span>
+  </div>
+  <h3 style={`color:${color};font-size:1.05rem;margin-bottom:0.4rem;`}>{title}</h3>
+  <p style="font-size:0.9rem;color:#555;line-height:1.6;">{description}</p>
+  <slot />
+</div>
+
+<style>
+  .step-card { transition: box-shadow 0.2s; }
+  .step-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
+  .step-badge {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+</style>

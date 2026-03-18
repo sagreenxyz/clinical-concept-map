@@ -1,0 +1,18 @@
+---
+/**
+ * TipBox.astro - Callout / alert box component
+ * Props:
+ *   type: 'tip' | 'warning' | 'critical'
+ *   title: optional heading text
+ */
+interface Props {
+  type?: 'tip' | 'warning' | 'critical';
+  title?: string;
+}
+const { type = 'tip', title } = Astro.props;
+const icons = { tip: '💡', warning: '⚠️', critical: '🚨' };
+---
+<div class={`tip-box ${type}`}>
+  {title && <strong>{icons[type]} {title}</strong>}
+  <slot />
+</div>

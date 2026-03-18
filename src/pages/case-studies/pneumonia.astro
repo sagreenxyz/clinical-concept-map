@@ -1,0 +1,251 @@
+---
+import CaseStudyLayout from '../../layouts/CaseStudyLayout.astro';
+import TutorialTrigger from '../../components/TutorialTrigger.astro';
+import TipBox from '../../components/TipBox.astro';
+import DiagnosisBlock from '../../components/DiagnosisBlock.astro';
+import DataTable from '../../components/DataTable.astro';
+
+const patient = {
+  initials: 'M.J.',
+  age: 68,
+  sex: 'Female',
+  admitDx: 'Community-Acquired Pneumonia (CAP)',
+  hpi: '68-year-old female with DM2 and HTN presents with 3-day history of productive cough with yellow-green sputum, fever to 101.8°F, and progressive dyspnea. Reports pleuritic chest pain left side. SpO₂ 88% on room air on arrival.',
+  pmh: ['Type 2 Diabetes Mellitus (HbA1c 8.4%)', 'Hypertension', 'Chronic Kidney Disease Stage 2', 'Former smoker (20 pack-years, quit 10 years ago)'],
+  meds: ['Metformin 1000 mg BID (HELD on admission)', 'Lisinopril 10 mg daily', 'Amlodipine 5 mg daily', 'Aspirin 81 mg daily'],
+  allergies: 'Penicillin (rash)',
+  vitals: {
+    'BP': '148/88 mmHg',
+    'HR': '104 bpm',
+    'RR': '28 breaths/min',
+    'Temp': '101.8°F (38.8°C)',
+    'SpO₂': '88% on RA',
+    'MAP': '108 mmHg',
+  },
+};
+
+const cues = [
+  { finding: 'SpO₂', type: 'Vital', value: '88% on room air', normalRange: '≥95%', status: 'Critical' },
+  { finding: 'Respiratory Rate', type: 'Vital', value: '28 breaths/min', normalRange: '12–20', status: 'Critical' },
+  { finding: 'Temperature', type: 'Vital', value: '101.8°F', normalRange: '97–99°F', status: 'Abnormal' },
+  { finding: 'Heart Rate', type: 'Vital', value: '104 bpm', normalRange: '60–100', status: 'Abnormal' },
+  { finding: 'WBC', type: 'Lab', value: '14,200/µL', normalRange: '4,500–11,000', status: 'Abnormal' },
+  { finding: 'CXR', type: 'Objective', value: 'Left lower lobe infiltrate/consolidation', normalRange: 'Clear', status: 'Abnormal' },
+  { finding: 'Productive cough', type: 'Objective', value: 'Yellow-green sputum, 3 days', normalRange: '—', status: 'Abnormal' },
+  { finding: 'Pleuritic chest pain', type: 'Subjective', value: 'Left side, 6/10 on inspiration', normalRange: '—', status: 'Concerning' },
+  { finding: 'BUN', type: 'Lab', value: '24 mg/dL', normalRange: '7–20', status: 'Abnormal' },
+  { finding: '"I can\'t catch my breath"', type: 'Subjective', value: 'Patient report', normalRange: '—', status: 'Concerning' },
+] as any[];
+---
+<CaseStudyLayout
+  title="Pneumonia — Community-Acquired"
+  description="Complete nursing concept map for a 68-year-old female with community-acquired pneumonia, including pathophysiology, cue analysis, NANDA diagnoses, SMART goals, and evaluation."
+  patient={patient}
+>
+  <!-- Step 1: Pathophysiology -->
+  <section class="case-section card fade-in">
+    <div class="step-header" style="border-color:var(--color-step-1);">
+      <span class="step-badge" style="background:var(--color-step-1);">1</span>
+      <h2>Disease Process & Pathophysiology</h2>
+      <TutorialTrigger tutorialKey="pathophysiology-why" label="Why Pathophysiology First?" />
+    </div>
+    <h3>Mechanism</h3>
+    <p>Community-acquired pneumonia involves invasion of the lung parenchyma by bacteria (most commonly <em>Streptococcus pneumoniae</em>). The inflammatory response fills alveoli with fluid and exudate — a process called <strong>consolidation</strong>. Consolidated alveoli cannot participate in gas exchange:</p>
+    <ul>
+      <li><strong>Ventilation-perfusion (V/Q) mismatch:</strong> Blood flows past consolidated, non-ventilated alveoli → oxygen cannot cross → hypoxemia</li>
+      <li><strong>Diffusion impairment:</strong> Exudate thickens the alveolar-capillary membrane → further reduces O₂ transfer</li>
+      <li><strong>Increased WOB:</strong> Consolidation decreases lung compliance → respiratory muscles work harder → tachypnea</li>
+    </ul>
+    <h3 style="margin-top:1rem;">Patient-Specific Modifiers</h3>
+    <p>M.J.'s DM2 (HbA1c 8.4%) impairs neutrophil chemotaxis and phagocytosis, slowing her immune response. Her CKD stage 2 limits antibiotic choices and fluid management. Former smoking history reduces mucociliary clearance — she cannot effectively clear purulent secretions.</p>
+    <h3 style="margin-top:1rem;">Risk Factors</h3>
+    <ul>
+      <li>Age ≥65 — impaired immune function, reduced cough reflex</li>
+      <li>Diabetes mellitus — impaired phagocytosis, delayed response</li>
+      <li>Former smoker — damaged mucociliary escalator</li>
+      <li>CKD — altered drug clearance</li>
+      <li>Penicillin allergy — limits antibiotic selection</li>
+    </ul>
+  </section>
+
+  <!-- Step 2: Recognizing Cues -->
+  <section class="case-section card fade-in">
+    <div class="step-header" style="border-color:var(--color-step-2);">
+      <span class="step-badge" style="background:var(--color-step-2);">2</span>
+      <h2>Recognizing Cues</h2>
+      <TutorialTrigger tutorialKey="objective-vs-subjective" label="Objective vs. Subjective" />
+    </div>
+    <DataTable rows={cues} />
+    <div style="margin-top:1rem;">
+      <TipBox type="warning" title="MAR as a Clinical Cue">
+        Metformin is HELD on admission — this signals either renal concern (CKD + contrast study possible) or acute illness with poor oral intake. Lisinopril and Amlodipine → hypertension is chronic. No anticoagulants, no insulin on this MAR.
+        <TutorialTrigger tutorialKey="mar-as-cue" label="Reading the MAR" />
+      </TipBox>
+    </div>
+  </section>
+
+  <!-- Step 3: Analyzing Cues -->
+  <section class="case-section card fade-in">
+    <div class="step-header" style="border-color:var(--color-step-3);">
+      <span class="step-badge" style="background:var(--color-step-3);">3</span>
+      <h2>Analyzing Cues</h2>
+      <TutorialTrigger tutorialKey="supporting-vs-concerning" label="Supporting vs. Concerning" />
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+      <div>
+        <h3 style="color:var(--color-step-4);margin-bottom:0.75rem;">✓ Supporting Data</h3>
+        <p style="font-size:0.85rem;color:#666;margin-bottom:0.5rem;">(Expected findings for CAP)</p>
+        <ul style="font-size:0.9rem;line-height:1.8;padding-left:1.2rem;">
+          <li>Fever 101.8°F — systemic inflammatory response to infection</li>
+          <li>WBC 14,200 — leukocytosis expected with bacterial pneumonia</li>
+          <li>Productive cough with purulent sputum — infection clearing mechanism</li>
+          <li>Left LLL infiltrate on CXR — consolidation at site of infection</li>
+          <li>Tachycardia (104) — compensatory response to fever and hypoxia</li>
+          <li>SpO₂ 88% — consistent with V/Q mismatch from consolidation</li>
+        </ul>
+      </div>
+      <div>
+        <h3 style="color:var(--color-critical);margin-bottom:0.75rem;">⚠ Concerning Data</h3>
+        <p style="font-size:0.85rem;color:#666;margin-bottom:0.5rem;">(Signals complications or priority needs)</p>
+        <ul style="font-size:0.9rem;line-height:1.8;padding-left:1.2rem;">
+          <li>SpO₂ 88% — <strong>critical</strong>; risk for respiratory failure</li>
+          <li>RR 28 — tachypnea signaling high work of breathing</li>
+          <li>BUN 24 (above normal) — dehydration or early renal strain</li>
+          <li>DM2 + infection → blood glucose will rise; insulin protocol may be needed</li>
+          <li>Pleuritic chest pain — must rule out parapneumonic effusion</li>
+          <li>Penicillin allergy — standard first-line antibiotics unavailable</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Step 4: Diagnoses & Actions -->
+  <section class="case-section card fade-in">
+    <div class="step-header" style="border-color:var(--color-step-4);">
+      <span class="step-badge" style="background:var(--color-step-4);">4</span>
+      <h2>Prioritizing Hypotheses & Taking Actions</h2>
+      <TutorialTrigger tutorialKey="abc-priority" label="ABC Priority Framework" />
+      <TutorialTrigger tutorialKey="nanda-format" label="NANDA Format" />
+    </div>
+
+    <DiagnosisBlock
+      priority={1}
+      nanda="Impaired Gas Exchange"
+      relatedTo="alveolar consolidation from bacterial pneumonia causing ventilation-perfusion mismatch"
+      aeb="SpO₂ 88% on RA, RR 28 breaths/min, PaO₂ 58 mmHg (ABG), CXR LLL consolidation, patient reports 'can't catch my breath'"
+      color="var(--color-step-1)"
+    >
+      <h4 style="margin:0.75rem 0 0.4rem;color:var(--color-primary);">SMART Goal</h4>
+      <p style="font-size:0.9rem;background:#f0f9f0;padding:0.6rem 0.8rem;border-radius:6px;">Patient will maintain SpO₂ ≥92% on ≤4L NC and report reduced dyspnea (≤3/10) within 4 hours of supplemental O₂ initiation and positioning.</p>
+      <h4 style="margin:0.75rem 0 0.4rem;color:var(--color-primary);">Interventions</h4>
+      <ol style="font-size:0.9rem;line-height:1.9;padding-left:1.2rem;">
+        <li>Initiate supplemental O₂ via NC — titrate to maintain SpO₂ ≥92%; reassess q1h</li>
+        <li>Position HOB ≥30–45° (semi-Fowler's) to optimize diaphragmatic excursion</li>
+        <li>Administer ordered nebulized albuterol — reassess breath sounds and SpO₂ post-treatment</li>
+        <li>Administer IV azithromycin (or levofloxacin per order given PCN allergy) — monitor for QTc prolongation</li>
+        <li>Obtain blood cultures ×2 before first antibiotic dose; monitor culture results</li>
+        <li>Monitor ABGs for rising PaCO₂ or worsening acidosis — report to provider if pH &lt;7.35</li>
+      </ol>
+    </DiagnosisBlock>
+
+    <DiagnosisBlock
+      priority={2}
+      nanda="Ineffective Airway Clearance"
+      relatedTo="excessive purulent secretions and increased work of breathing secondary to pneumonia"
+      aeb="productive cough with yellow-green sputum, RR 28, coarse crackles on auscultation bilateral lower lobes"
+      color="var(--color-step-2)"
+    >
+      <h4 style="margin:0.75rem 0 0.4rem;color:var(--color-primary);">SMART Goal</h4>
+      <p style="font-size:0.9rem;background:#f0f9f0;padding:0.6rem 0.8rem;border-radius:6px;">Patient will demonstrate effective cough technique and expectorate secretions, with improvement in breath sounds from coarse crackles to diminished by end of shift.</p>
+      <h4 style="margin:0.75rem 0 0.4rem;color:var(--color-primary);">Interventions</h4>
+      <ol style="font-size:0.9rem;line-height:1.9;padding-left:1.2rem;">
+        <li>Encourage deep breathing and coached cough q2h while awake; pillow splinting for pleuritic pain during coughing</li>
+        <li>Administer analgesics as ordered 30 min before respiratory treatments to facilitate effective coughing</li>
+        <li>Administer mucolytic (acetylcysteine) or expectorant as ordered; increase oral fluid intake if not contraindicated</li>
+        <li>Perform postural drainage and percussion if tolerated (avoid immediately after meals)</li>
+        <li>Auscultate breath sounds q4h; document location and quality of adventitious sounds</li>
+        <li>Monitor sputum quantity, color, and consistency; send sputum culture if not already collected</li>
+      </ol>
+    </DiagnosisBlock>
+
+    <DiagnosisBlock
+      priority={3}
+      nanda="Activity Intolerance"
+      relatedTo="imbalance between oxygen supply and demand secondary to impaired gas exchange"
+      aeb="SpO₂ drops to 84% on minimal exertion, patient reports extreme fatigue, unable to complete ADLs"
+      color="var(--color-step-3)"
+    >
+      <h4 style="margin:0.75rem 0 0.4rem;color:var(--color-primary);">SMART Goal</h4>
+      <p style="font-size:0.9rem;background:#f0f9f0;padding:0.6rem 0.8rem;border-radius:6px;">Patient will tolerate dangling at bedside for 5 minutes without SpO₂ dropping below 90% or HR increasing &gt;20 bpm from baseline within 24 hours.</p>
+      <h4 style="margin:0.75rem 0 0.4rem;color:var(--color-primary);">Interventions</h4>
+      <ol style="font-size:0.9rem;line-height:1.9;padding-left:1.2rem;">
+        <li>Cluster nursing care to allow rest periods of ≥90 minutes between activities</li>
+        <li>Assist with ADLs as needed; do not allow patient to perform self-care activities that drop SpO₂ &lt;90%</li>
+        <li>Monitor SpO₂ and HR before, during, and after all activity — stop if SpO₂ &lt;90% or HR &gt;120</li>
+        <li>Progress activity gradually per patient tolerance; document exercise tolerance at each shift</li>
+        <li>Provide portable O₂ for ambulation if ordered once patient is more stable</li>
+      </ol>
+    </DiagnosisBlock>
+  </section>
+
+  <!-- Step 5: Evaluation -->
+  <section class="case-section card fade-in">
+    <div class="step-header" style="border-color:var(--color-step-5);">
+      <span class="step-badge" style="background:var(--color-step-5);">5</span>
+      <h2>Evaluating Outcomes</h2>
+      <TutorialTrigger tutorialKey="evaluation-evidence" label="Writing Objective Evaluations" />
+      <TutorialTrigger tutorialKey="feedback-loop" label="The Reassessment Loop" />
+    </div>
+
+    <div style="display:grid;gap:1rem;">
+      <div class="eval-block" style="border-left:4px solid var(--color-step-4);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+          <strong>Dx 1: Impaired Gas Exchange</strong>
+          <span class="eval-badge met">Partially Met</span>
+        </div>
+        <p style="font-size:0.9rem;color:#444;">SpO₂ improved from 88% to 93% on 4L NC after repositioning and first nebulizer treatment at 1400. RR decreased from 28 to 22 breaths/min. Patient reports dyspnea 4/10 (down from 8/10 on admission). Does not yet meet goal of ≥92% — antibiotic effect expected to begin improving consolidation over 24–48 hours. Repeat ABG pending.</p>
+      </div>
+      <div class="eval-block" style="border-left:4px solid var(--color-step-4);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+          <strong>Dx 2: Ineffective Airway Clearance</strong>
+          <span class="eval-badge partial">Partially Met</span>
+        </div>
+        <p style="font-size:0.9rem;color:#444;">Patient demonstrates coached cough technique after teaching. Expectorated ~10 mL thick yellow sputum after treatment. Coarse crackles persist in LLL — improvement expected as infection responds to antibiotics. Sputum culture sent.</p>
+      </div>
+      <div class="eval-block" style="border-left:4px solid var(--color-step-4);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+          <strong>Dx 3: Activity Intolerance</strong>
+          <span class="eval-badge notmet">Not Met — Revised Plan</span>
+        </div>
+        <p style="font-size:0.9rem;color:#444;">Patient unable to tolerate dangling — SpO₂ dropped to 86% after 2 minutes. Returned to bed. Goal deferred until gas exchange improves. Revised plan: maintain complete bed rest with position changes q2h; reassess activity tolerance in 12 hours when antibiotic effect may begin.</p>
+      </div>
+    </div>
+  </section>
+
+  <style>
+    .case-section { margin-bottom: 1.75rem; }
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid;
+    }
+    .step-header h2 { font-size: 1.2rem; color: var(--color-primary); flex: 1; min-width: 150px; }
+    .step-badge {
+      width: 32px; height: 32px; border-radius: 50%;
+      color: #fff; font-weight: 700; font-size: 0.95rem;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    h3 { color: var(--color-primary); font-size: 1rem; margin-bottom: 0.5rem; }
+    ul, ol { padding-left: 1.5rem; line-height: 1.8; color: #444; font-size: 0.92rem; }
+    h4 { font-size: 0.95rem; }
+    .eval-block { background: #fafafa; border-radius: 6px; padding: 0.9rem 1rem; }
+    .eval-badge { font-size: 0.75rem; font-weight: 700; padding: 0.2rem 0.7rem; border-radius: 12px; }
+    .eval-badge.met { background: #27AE60; color: #fff; }
+    .eval-badge.partial { background: var(--color-warning); color: #fff; }
+    .eval-badge.notmet { background: var(--color-critical); color: #fff; }
+  </style>
+</CaseStudyLayout>

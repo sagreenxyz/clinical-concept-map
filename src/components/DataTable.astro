@@ -1,0 +1,64 @@
+---
+/**
+ * DataTable.astro - Cue data table with finding, type, value, normal range, status
+ * Props:
+ *   rows: array of { finding, type, value, normalRange, status }
+ */
+interface CueRow {
+  finding: string;
+  type: 'Objective' | 'Subjective' | 'Lab' | 'Vital';
+  value: string;
+  normalRange?: string;
+  status?: 'Normal' | 'Abnormal' | 'Critical' | 'Concerning';
+}
+
+interface Props {
+  rows: CueRow[];
+  caption?: string;
+}
+const { rows, caption } = Astro.props;
+
+const statusColor: Record<string, string> = {
+  Normal:     '#27AE60',
+  Abnormal:   '#E67E22',
+  Critical:   '#C0392B',
+  Concerning: '#E8A838',
+};
+---
+<div style="overflow-x:auto;">
+  <table style="width:100%;border-collapse:collapse;font-size:0.9rem;">
+    {caption && <caption style="text-align:left;font-weight:600;color:var(--color-primary);margin-bottom:0.5rem;caption-side:top;">{caption}</caption>}
+    <thead>
+      <tr style="background:var(--color-primary);color:#fff;">
+        <th style="padding:8px 12px;text-align:left;">Finding</th>
+        <th style="padding:8px 12px;text-align:left;">Type</th>
+        <th style="padding:8px 12px;text-align:left;">Value / Description</th>
+        <th style="padding:8px 12px;text-align:left;">Normal Range</th>
+        <th style="padding:8px 12px;text-align:left;">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {rows.map((row, i) => (
+        <tr style={i % 2 === 0 ? 'background:#f8f8f8;' : ''}>
+          <td style="padding:7px 12px;font-weight:500;">{row.finding}</td>
+          <td style="padding:7px 12px;color:#666;font-size:0.82rem;">{row.type}</td>
+          <td style="padding:7px 12px;">{row.value}</td>
+          <td style="padding:7px 12px;color:#666;font-size:0.82rem;">{row.normalRange || '—'}</td>
+          <td style="padding:7px 12px;">
+            {row.status && (
+              <span style={`
+                display:inline-block;
+                padding:2px 8px;
+                border-radius:12px;
+                font-size:0.75rem;
+                font-weight:700;
+                color:#fff;
+                background:${statusColor[row.status] || '#999'};
+              `}>{row.status}</span>
+            )}
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>

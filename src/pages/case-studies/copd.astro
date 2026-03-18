@@ -1,0 +1,242 @@
+---
+import CaseStudyLayout from '../../layouts/CaseStudyLayout.astro';
+import TutorialTrigger from '../../components/TutorialTrigger.astro';
+import TipBox from '../../components/TipBox.astro';
+import DiagnosisBlock from '../../components/DiagnosisBlock.astro';
+import DataTable from '../../components/DataTable.astro';
+
+const patient = {
+  initials: 'D.H.',
+  age: 64,
+  sex: 'Male',
+  admitDx: 'Acute COPD Exacerbation (Stage III Gold)',
+  hpi: '64-year-old male with GOLD Stage III COPD, active smoker (40 pack-years), presents with 3-day history of progressive dyspnea worse than baseline, increased sputum production (thick green), inability to complete sentences, and audible wheeze. EMS found SpO₂ 86% on home 2L NC. ABG on 2L NC in ED: pH 7.31, PaCO₂ 58 mmHg, PaO₂ 52 mmHg, HCO₃ 28.',
+  pmh: ['COPD — GOLD Stage III (FEV1 ~40% predicted)', 'Hypertension', 'GERD', 'Anxiety Disorder', 'Current smoker (40 pack-years)'],
+  meds: ['Tiotropium inhaler 18 mcg daily (LAMA)', 'Formoterol inhaler BID (LABA)', 'Fluticasone/Salmeterol 250/50 BID (ICS/LABA)', 'Amlodipine 5 mg daily', 'Omeprazole 20 mg daily', 'Lorazepam 0.5 mg PRN (HOLD — respiratory depression risk)'],
+  allergies: 'NKDA',
+  vitals: {
+    'BP': '152/94 mmHg',
+    'HR': '108 bpm',
+    'RR': '32 breaths/min',
+    'SpO₂': '86% on 2L NC',
+    'Temp': '38.1°C',
+    'ABG pH': '7.31',
+    'PaCO₂': '58 mmHg',
+    'HCO₃': '28 mEq/L',
+  },
+};
+
+const cues = [
+  { finding: 'SpO₂', type: 'Vital', value: '86% on 2L NC', normalRange: '88–92% (COPD target)', status: 'Critical' },
+  { finding: 'pH', type: 'Lab', value: '7.31', normalRange: '7.35–7.45', status: 'Critical' },
+  { finding: 'PaCO₂', type: 'Lab', value: '58 mmHg', normalRange: '35–45 (COPD baseline ~50–55)', status: 'Critical' },
+  { finding: 'PaO₂', type: 'Lab', value: '52 mmHg', normalRange: '80–100 mmHg', status: 'Critical' },
+  { finding: 'HCO₃', type: 'Lab', value: '28 mEq/L', normalRange: '22–26 mEq/L', status: 'Abnormal' },
+  { finding: 'Respiratory Rate', type: 'Vital', value: '32 breaths/min', normalRange: '12–20', status: 'Critical' },
+  { finding: 'Heart Rate', type: 'Vital', value: '108 bpm', normalRange: '60–100', status: 'Abnormal' },
+  { finding: 'Sputum', type: 'Objective', value: 'Thick, green, copious', normalRange: 'Clear/white', status: 'Abnormal' },
+  { finding: 'Work of breathing', type: 'Objective', value: 'Accessory muscle use, pursed lips, tripoding', normalRange: 'None', status: 'Critical' },
+  { finding: '"I can\'t breathe"', type: 'Subjective', value: 'Unable to complete sentences', normalRange: '—', status: 'Critical' },
+] as any[];
+---
+<CaseStudyLayout
+  title="COPD Exacerbation"
+  description="Complete nursing concept map for a 64-year-old male with acute COPD exacerbation — respiratory acidosis, hypoxic drive, Venturi mask, BiPAP considerations."
+  patient={patient}
+>
+  <TipBox type="critical" title="⚠ CRITICAL: O₂ Target for COPD is 88–92%">
+    Do NOT titrate to ≥95%. This patient relies on hypoxic drive for respiratory stimulus. High-flow O₂ can suppress breathing, worsen CO₂ retention, and precipitate CO₂ narcosis → respiratory failure. Use Venturi mask (Venti-mask) 24–28% FiO₂ for precise O₂ delivery.
+    <TutorialTrigger tutorialKey="copd-hypoxic-drive" label="Hypoxic Drive Mechanism" variant="critical" />
+    <TutorialTrigger tutorialKey="oxygen-targets" label="O₂ Targets by Condition" variant="warning" />
+  </TipBox>
+
+  <section class="case-section card fade-in">
+    <div class="step-header" style="border-color:var(--color-step-1);">
+      <span class="step-badge" style="background:var(--color-step-1);">1</span>
+      <h2>Disease Process & Pathophysiology</h2>
+      <TutorialTrigger tutorialKey="pathophysiology-why" label="Why Pathophysiology First?" />
+    </div>
+    <h3>Mechanism of COPD & Exacerbation</h3>
+    <p>COPD involves two overlapping pathological processes:</p>
+    <ul>
+      <li><strong>Emphysema:</strong> Alveolar wall destruction → loss of elastic recoil → air trapping → hyperinflation → barrel chest</li>
+      <li><strong>Chronic bronchitis:</strong> Goblet cell hyperplasia → excess mucus → airway obstruction → V/Q mismatch</li>
+    </ul>
+    <p style="margin-top:0.75rem;">An exacerbation (typically triggered by infection — viral or bacterial) causes acute-on-chronic worsening:</p>
+    <ul>
+      <li>Increased airway inflammation → further bronchoconstriction → obstruction worsens</li>
+      <li>Mucus plugging → more air trapping → CO₂ rises acutely (acute-on-chronic hypercapnia)</li>
+      <li>V/Q mismatch worsens → SpO₂ falls → tissue hypoxia</li>
+    </ul>
+    <h3 style="margin-top:1rem;">ABG Interpretation — Partially Compensated Respiratory Acidosis</h3>
+    <div style="background:#f0f4f8;padding:0.8rem 1rem;border-radius:6px;font-size:0.9rem;">
+      <p><strong>pH 7.31</strong> → acidotic | <strong>PaCO₂ 58</strong> → elevated (respiratory cause, acidotic direction ✓) | <strong>HCO₃ 28</strong> → elevated (kidney compensating, alkalotic direction ✓ = partial compensation)</p>
+      <p style="margin-top:0.4rem;"><strong>Conclusion:</strong> Partially compensated respiratory acidosis (HCO₃ elevated = kidneys compensating, but pH still below 7.35 = not fully compensated)</p>
+      <p style="margin-top:0.4rem;"><strong>Oxygenation:</strong> PaO₂ 52 = severe hypoxemia</p>
+    </div>
+    <div style="margin-top:0.75rem;">
+      <TutorialTrigger tutorialKey="abg-interpretation" label="Full ABG Guide" />
+    </div>
+    <TipBox type="warning" title="MAR Alert — Lorazepam is HELD — Do NOT Give">
+      Benzodiazepines (Lorazepam) are respiratory depressants. In a patient with acute respiratory acidosis and CO₂ retention, Benzo administration could suppress breathing further and precipitate respiratory arrest. Marked HOLD. Anxiety management: low-dose, titrated opioids (morphine) may be appropriate per provider — NOT benzodiazepines.
+    </TipBox>
+  </section>
+
+  <section class="case-section card fade-in">
+    <div class="step-header" style="border-color:var(--color-step-2);">
+      <span class="step-badge" style="background:var(--color-step-2);">2</span>
+      <h2>Recognizing Cues</h2>
+      <TutorialTrigger tutorialKey="objective-vs-subjective" label="Objective vs. Subjective" />
+    </div>
+    <DataTable rows={cues} />
+  </section>
+
+  <section class="case-section card fade-in">
+    <div class="step-header" style="border-color:var(--color-step-3);">
+      <span class="step-badge" style="background:var(--color-step-3);">3</span>
+      <h2>Analyzing Cues</h2>
+      <TutorialTrigger tutorialKey="supporting-vs-concerning" label="Supporting vs. Concerning" />
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+      <div>
+        <h3 style="color:var(--color-step-4);">✓ Supporting Data</h3>
+        <ul style="font-size:0.9rem;line-height:1.8;padding-left:1.2rem;">
+          <li>Wheeze and rhonchi — air flow through obstructed airways</li>
+          <li>Barrel chest (noted on PE) — chronic air trapping</li>
+          <li>SpO₂ chronically low (baseline 91%) — expected with Stage III COPD</li>
+          <li>CO₂ retention — chronic for COPD Stage III (expected baseline PaCO₂ 50–55)</li>
+          <li>HCO₃ 28 — elevated from chronic renal compensation (expected in chronic hypercapnia)</li>
+          <li>Pursed lip breathing — learned accessory technique</li>
+        </ul>
+      </div>
+      <div>
+        <h3 style="color:var(--color-critical);">⚠ Concerning Data</h3>
+        <ul style="font-size:0.9rem;line-height:1.8;padding-left:1.2rem;">
+          <li>pH 7.31 — acidosis below compensation; ACUTE decompensation</li>
+          <li>PaCO₂ 58 — above this patient's likely chronic baseline (58 vs ~50–55)</li>
+          <li>SpO₂ 86% — below even COPD target of 88–92%</li>
+          <li>RR 32 — extreme respiratory fatigue approaching respiratory failure</li>
+          <li>Unable to complete sentences — severe respiratory distress</li>
+          <li>Green sputum — bacterial superinfection driving exacerbation</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="case-section card fade-in">
+    <div class="step-header" style="border-color:var(--color-step-4);">
+      <span class="step-badge" style="background:var(--color-step-4);">4</span>
+      <h2>Prioritizing Hypotheses & Taking Actions</h2>
+      <TutorialTrigger tutorialKey="abc-priority" label="ABC Priority" />
+      <TutorialTrigger tutorialKey="nanda-format" label="NANDA Format" />
+    </div>
+
+    <DiagnosisBlock
+      priority={1}
+      nanda="Impaired Gas Exchange"
+      relatedTo="acute-on-chronic airflow obstruction, mucus plugging, and V/Q mismatch exacerbated by bacterial superinfection"
+      aeb="pH 7.31, PaCO₂ 58, PaO₂ 52, SpO₂ 86%, RR 32, patient unable to complete sentences"
+      color="var(--color-step-1)"
+    >
+      <h4 style="margin:0.75rem 0 0.4rem;color:var(--color-primary);">SMART Goal</h4>
+      <p style="font-size:0.9rem;background:#f0f9f0;padding:0.6rem 0.8rem;border-radius:6px;">Patient will achieve SpO₂ 88–92% on Venturi mask (28% FiO₂) and report dyspnea improvement from current 9/10 to ≤5/10 within 2 hours of bronchodilator and controlled O₂ therapy; pH will trend toward 7.35 on serial ABG.</p>
+      <h4 style="margin:0.75rem 0 0.4rem;color:var(--color-primary);">Interventions</h4>
+      <ol style="font-size:0.9rem;line-height:1.9;padding-left:1.2rem;">
+        <li><strong>Initiate Venturi mask at 24–28% FiO₂</strong> — titrate to SpO₂ 88–92% ONLY; DO NOT target ≥95%</li>
+        <li>Administer nebulized albuterol + ipratropium (Duoneb) — q20min × 3, then reassess; bronchodilation is the primary intervention</li>
+        <li>Administer IV methylprednisolone as ordered — systemic steroids reduce airway inflammation in 4–6 hours</li>
+        <li>Administer azithromycin or doxycycline for bacterial exacerbation (antibiotic choice per sensitivity/local resistance)</li>
+        <li>Position: HOB 45–60°, tripod/leaning forward encouraged — maximizes diaphragmatic excursion</li>
+        <li>Serial ABGs q2–4h — monitor for worsening CO₂ retention (rising PaCO₂ + falling pH = escalate to BiPAP)</li>
+        <li>If no improvement with initial therapy: prepare for non-invasive positive pressure ventilation (BiPAP — first-line before intubation in COPD)</li>
+      </ol>
+    </DiagnosisBlock>
+
+    <DiagnosisBlock
+      priority={2}
+      nanda="Ineffective Airway Clearance"
+      relatedTo="increased mucus production from bacterial superinfection and impaired mucociliary clearance from chronic COPD"
+      aeb="thick green sputum, RR 32, audible wheeze bilaterally, inability to clear secretions independently"
+      color="var(--color-step-2)"
+    >
+      <h4 style="margin:0.75rem 0 0.4rem;color:var(--color-primary);">SMART Goal</h4>
+      <p style="font-size:0.9rem;background:#f0f9f0;padding:0.6rem 0.8rem;border-radius:6px;">Patient will demonstrate improved airway clearance by expectorating secretions with coached cough technique, and breath sounds will improve from bilateral wheeze to scattered ronchi within 4 hours of bronchodilator therapy.</p>
+      <h4 style="margin:0.75rem 0 0.4rem;color:var(--color-primary);">Interventions</h4>
+      <ol style="font-size:0.9rem;line-height:1.9;padding-left:1.2rem;">
+        <li>Administer nebulized bronchodilators as ordered — ipratropium targets airway secretion and bronchospasm</li>
+        <li>Encourage oral fluid intake (2–3L/day if not contraindicated) — thins secretions for easier expectoration</li>
+        <li>Teach and coach controlled coughing (huff cough technique) — less energy-consuming than forceful cough</li>
+        <li>Chest physiotherapy / vibratory vest if ordered — loosens adherent mucus plugs</li>
+        <li>Auscultate breath sounds q2h — document changes in wheeze, rhonchi pattern</li>
+        <li>Send sputum C&S — guide antibiotic de-escalation when sensitivities return</li>
+      </ol>
+    </DiagnosisBlock>
+
+    <DiagnosisBlock
+      priority={3}
+      nanda="Anxiety"
+      relatedTo="air hunger, acute respiratory distress, and perceived inability to breathe"
+      aeb="patient stating 'I feel like I'm suffocating', restless, tachycardic 108, accessory muscle use; note Lorazepam on MAR is HELD"
+      color="var(--color-step-3)"
+    >
+      <h4 style="margin:0.75rem 0 0.4rem;color:var(--color-primary);">SMART Goal</h4>
+      <p style="font-size:0.9rem;background:#f0f9f0;padding:0.6rem 0.8rem;border-radius:6px;">Patient will verbalize reduced sense of air hunger (≤4/10) and demonstrate relaxed facial expression within 2 hours of bronchodilator therapy and nursing presence interventions.</p>
+      <h4 style="margin:0.75rem 0 0.4rem;color:var(--color-primary);">Interventions</h4>
+      <ol style="font-size:0.9rem;line-height:1.9;padding-left:1.2rem;">
+        <li>Remain at bedside during acute distress — presence and calm communication reduce anxiety and respiratory rate</li>
+        <li>Coach pursed-lip breathing — extends expiration, reduces air trapping, gives patient sense of control</li>
+        <li>Explain all interventions clearly and calmly — patient anxiety worsens with uncertainty</li>
+        <li>Do NOT administer Lorazepam — hold per order; respiratory depressant contraindicated in CO₂ retention</li>
+        <li>Position of comfort: high Fowler's or leaning forward supported on bedside table</li>
+        <li>Reduce environmental stimuli: dim lights, minimize unnecessary personnel in room during acute phase</li>
+      </ol>
+    </DiagnosisBlock>
+  </section>
+
+  <section class="case-section card fade-in">
+    <div class="step-header" style="border-color:var(--color-step-5);">
+      <span class="step-badge" style="background:var(--color-step-5);">5</span>
+      <h2>Evaluating Outcomes</h2>
+      <TutorialTrigger tutorialKey="evaluation-evidence" label="Objective Evaluations" />
+      <TutorialTrigger tutorialKey="feedback-loop" label="Reassessment Loop" />
+    </div>
+    <div style="display:grid;gap:1rem;">
+      <div class="eval-block" style="border-left:4px solid var(--color-step-4);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+          <strong>Dx 1: Impaired Gas Exchange</strong>
+          <span class="eval-badge partial">Partially Met</span>
+        </div>
+        <p style="font-size:0.9rem;color:#444;">SpO₂ improved to 90% on 28% Venturi mask after 3 nebulizer treatments. RR decreased from 32 to 26 breaths/min. Patient can speak in short phrases (up from single words). Repeat ABG at 2 hours: pH 7.33 (improved), PaCO₂ 55 (improving). Not yet meeting pH ≥7.35 — team notified; BiPAP trial being considered if no further improvement in 1 hour.</p>
+      </div>
+      <div class="eval-block" style="border-left:4px solid var(--color-step-4);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+          <strong>Dx 2: Ineffective Airway Clearance</strong>
+          <span class="eval-badge partial">Partially Met</span>
+        </div>
+        <p style="font-size:0.9rem;color:#444;">Patient expectorated approximately 15 mL thick yellow-green sputum post-nebulization. Bilateral wheeze improved to scattered expiratory rhonchi. Huff cough technique demonstrated with verbal instruction. Sputum culture sent.</p>
+      </div>
+      <div class="eval-block" style="border-left:4px solid var(--color-step-4);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+          <strong>Dx 3: Anxiety</strong>
+          <span class="eval-badge met">Met</span>
+        </div>
+        <p style="font-size:0.9rem;color:#444;">Patient reports air hunger 5/10 (down from 9/10 on admission). HR decreased to 96. Facial expression relaxed. Pursed-lip breathing demonstrated appropriately. Family at bedside providing reassurance. Lorazepam appropriately held throughout shift.</p>
+      </div>
+    </div>
+  </section>
+
+  <style>
+    .case-section { margin-bottom: 1.75rem; }
+    .step-header { display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;margin-bottom:1rem;padding-bottom:0.75rem;border-bottom:2px solid; }
+    .step-header h2 { font-size:1.2rem;color:var(--color-primary);flex:1;min-width:150px; }
+    .step-badge { width:32px;height:32px;border-radius:50%;color:#fff;font-weight:700;font-size:0.95rem;display:flex;align-items:center;justify-content:center;flex-shrink:0; }
+    h3 { color:var(--color-primary);font-size:1rem;margin-bottom:0.5rem; }
+    ul, ol { padding-left:1.5rem;line-height:1.8;color:#444;font-size:0.92rem; }
+    h4 { font-size:0.95rem; }
+    .eval-block { background:#fafafa;border-radius:6px;padding:0.9rem 1rem; }
+    .eval-badge { font-size:0.75rem;font-weight:700;padding:0.2rem 0.7rem;border-radius:12px; }
+    .eval-badge.met { background:#27AE60;color:#fff; }
+    .eval-badge.partial { background:var(--color-warning);color:#fff; }
+    .eval-badge.notmet { background:var(--color-critical);color:#fff; }
+  </style>
+</CaseStudyLayout>
