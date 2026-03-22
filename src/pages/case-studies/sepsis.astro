@@ -1,0 +1,232 @@
+---
+import CaseStudyLayout from '../../layouts/CaseStudyLayout.astro';
+import TutorialTrigger from '../../components/TutorialTrigger.astro';
+import TipBox from '../../components/TipBox.astro';
+import DiagnosisBlock from '../../components/DiagnosisBlock.astro';
+import DataTable from '../../components/DataTable.astro';
+
+const patient = {
+  initials: 'E.W.',
+  age: 81,
+  sex: 'Female',
+  admitDx: 'Sepsis — UTI Source (Gram-negative bacteremia)',
+  hpi: '81-year-old female with Afib, DM2, and CKD stage 2 who was brought in by family after 2 days of confusion, decreased oral intake, and foul-smelling urine. No reported fever at home. In ED: T 38.9°C, HR 118, BP 88/54, RR 24, SpO₂ 94% on RA, urine UA strongly positive. Lactate 3.4 mmol/L. Mental status: confused and disoriented.',
+  pmh: ['Atrial Fibrillation (rate-controlled)', 'Type 2 Diabetes Mellitus', 'CKD Stage 2', 'Hypertension', 'Osteoporosis'],
+  meds: ['Warfarin 5 mg daily (INR 1.6)', 'Metformin 1000 mg BID (HELD)', 'Lisinopril 10 mg daily (HELD — hypotensive)', 'Calcium + Vitamin D', 'Aspirin 81 mg daily'],
+  allergies: 'Ciprofloxacin (tendinopathy history)',
+  vitals: {
+    'BP': '88/54 mmHg',
+    'HR': '118 bpm',
+    'RR': '24 breaths/min',
+    'Temp': '38.9°C (102°F)',
+    'SpO₂': '94% on RA',
+    'MAP': '65 mmHg',
+    'Lactate': '3.4 mmol/L',
+  },
+};
+
+const cues = [
+  { finding: 'MAP', type: 'Vital', value: '65 mmHg (borderline)', normalRange: '70–100 mmHg', status: 'Critical' },
+  { finding: 'Lactate', type: 'Lab', value: '3.4 mmol/L', normalRange: '<2.0 mmol/L', status: 'Critical' },
+  { finding: 'Heart Rate', type: 'Vital', value: '118 bpm', normalRange: '60–100 bpm', status: 'Abnormal' },
+  { finding: 'WBC', type: 'Lab', value: '18,200/µL with 18% bands', normalRange: '4,500–11,000', status: 'Critical' },
+  { finding: 'Blood Pressure', type: 'Vital', value: '88/54 mmHg', normalRange: '120/80 mmHg', status: 'Critical' },
+  { finding: 'Temperature', type: 'Vital', value: '38.9°C', normalRange: '36.1–37.2°C', status: 'Abnormal' },
+  { finding: 'Mental status', type: 'Objective', value: 'Confused, disoriented ×2 (baseline oriented ×4)', normalRange: 'Alert, oriented ×4', status: 'Critical' },
+  { finding: 'Urine appearance', type: 'Objective', value: 'Cloudy, foul-smelling, dark amber', normalRange: 'Clear yellow', status: 'Abnormal' },
+  { finding: 'Creatinine', type: 'Lab', value: '1.9 mg/dL (baseline 1.1)', normalRange: '0.6–1.2 mg/dL', status: 'Abnormal' },
+  { finding: 'Urine output', type: 'Objective', value: '15 mL/hr x 2 hours', normalRange: '>30 mL/hr (0.5 mL/kg/hr)', status: 'Critical' },
+] as any[];
+---
+<CaseStudyLayout
+  title="Sepsis — UTI Source"
+  description="Complete nursing concept map for an 81-year-old female with gram-negative sepsis from UTI source — sepsis bundle, tissue perfusion, hemodynamic monitoring."
+  patient={patient}
+>
+  <TipBox type="critical" title="Sepsis 1-Hour Bundle Active">
+    This patient requires immediate action. Lactate ≥2 + hypotension = septic shock criteria. Complete: blood cultures ×2 before antibiotics, repeat lactate, 30 mL/kg IVF bolus, broad-spectrum antibiotics within 1 hour, vasopressors if MAP remains &lt;65 despite fluids.
+    <TutorialTrigger tutorialKey="sepsis-bundle" label="Full Sepsis Bundle Tutorial" variant="critical" />
+  </TipBox>
+
+  <section class="case-section card fade-in">
+    <div class="step-header" style="border-color:var(--color-step-1);">
+      <span class="step-badge" style="background:var(--color-step-1);">1</span>
+      <h2>Disease Process & Pathophysiology</h2>
+      <TutorialTrigger tutorialKey="pathophysiology-why" label="Why Pathophysiology First?" />
+    </div>
+    <h3>Mechanism</h3>
+    <p>E.W.'s UTI — likely gram-negative bacteremia (<em>E. coli</em> most common in elderly females) — has progressed to sepsis via dysregulated host immune response:</p>
+    <ul>
+      <li><strong>Bacterial LPS → PAMP recognition → massive cytokine release (cytokine storm):</strong> TNF-α, IL-1, IL-6 trigger systemic inflammatory response</li>
+      <li><strong>Vasodilation → distributive shock:</strong> Inflammatory mediators cause profound vasodilation → relative hypovolemia → hypotension → tissue hypoperfusion</li>
+      <li><strong>Microvascular thrombosis:</strong> Capillary endothelial damage → microthrombi → impaired oxygen delivery to organs</li>
+      <li><strong>Elevated lactate:</strong> Inadequate O₂ delivery → cells shift to anaerobic metabolism → lactate production → metabolic acidosis</li>
+      <li><strong>Organ dysfunction:</strong> Kidneys (AKI — creatinine rising), brain (encephalopathy — new confusion)</li>
+    </ul>
+    <h3 style="margin-top:1rem;">Why E.W. Presents Atypically</h3>
+    <p>Elderly patients may be afebrile (or hypothermic) in early sepsis. E.W.'s <strong>first sign was confusion</strong> — a classic atypical sepsis presentation in age ≥65. Diabetes impairs immune response. Her only low-grade fever (38.9°C) and absence of rigors reflects blunted immune response. New confusion in any elderly patient = rule out sepsis.</p>
+    <TipBox type="warning" title="Atypical Presentations in Elderly Sepsis">
+      Age ≥65 patients may present with hypothermia rather than fever, confusion as the sole symptom, normal WBC, or subtle vital sign changes. Any acute behavioral change in an elder with suspected infection should trigger sepsis workup.
+    </TipBox>
+  </section>
+
+  <section class="case-section card fade-in">
+    <div class="step-header" style="border-color:var(--color-step-2);">
+      <span class="step-badge" style="background:var(--color-step-2);">2</span>
+      <h2>Recognizing Cues</h2>
+      <TutorialTrigger tutorialKey="objective-vs-subjective" label="Objective vs. Subjective" />
+    </div>
+    <DataTable rows={cues} />
+    <div style="margin-top:1rem;">
+      <TipBox type="critical" title="MAR as a Cue — Bleeding Risk Active">
+        Warfarin 5 mg with INR 1.6 (subtherapeutic) = Afib anticoagulation inadequate AND bleeding risk still present. Metformin HELD = contrast study likely. Lisinopril HELD = appropriate given hypotension. Ciprofloxacin allergy on file — do NOT order for UTI (common error). Use trimethoprim-sulfamethoxazole with susceptibility, or ceftriaxone IV per sensitivity.
+      </TipBox>
+    </div>
+  </section>
+
+  <section class="case-section card fade-in">
+    <div class="step-header" style="border-color:var(--color-step-3);">
+      <span class="step-badge" style="background:var(--color-step-3);">3</span>
+      <h2>Analyzing Cues</h2>
+      <TutorialTrigger tutorialKey="supporting-vs-concerning" label="Supporting vs. Concerning" />
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+      <div>
+        <h3 style="color:var(--color-step-4);">✓ Supporting Data</h3>
+        <ul style="font-size:0.9rem;line-height:1.8;padding-left:1.2rem;">
+          <li>WBC 18,200 with 18% bands — robust leukocytosis confirms active infection</li>
+          <li>Positive UA — source of infection confirmed</li>
+          <li>Fever 38.9°C — systemic inflammatory response</li>
+          <li>Tachycardia 118 — compensatory response to hypotension</li>
+          <li>Elevated lactate 3.4 — tissue hypoperfusion consistent with sepsis</li>
+        </ul>
+      </div>
+      <div>
+        <h3 style="color:var(--color-critical);">⚠ Concerning / Alarming Data</h3>
+        <ul style="font-size:0.9rem;line-height:1.8;padding-left:1.2rem;">
+          <li>MAP 65 — <strong>at threshold for septic shock</strong>; any further drop requires vasopressors</li>
+          <li>Lactate 3.4 — above 2.0 = sepsis regardless of BP; above 4.0 = septic shock independently</li>
+          <li>Acute confusion — new onset = organ dysfunction criterion (SOFA)</li>
+          <li>Urine output 15 mL/hr — oliguria = renal hypoperfusion (AKI developing)</li>
+          <li>Creatinine 1.9 vs. baseline 1.1 — AKI criterion met (increase >0.3)</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="case-section card fade-in">
+    <div class="step-header" style="border-color:var(--color-step-4);">
+      <span class="step-badge" style="background:var(--color-step-4);">4</span>
+      <h2>Prioritizing Hypotheses & Taking Actions</h2>
+      <TutorialTrigger tutorialKey="abc-priority" label="ABC Priority" />
+      <TutorialTrigger tutorialKey="sepsis-bundle" label="Sepsis Bundle" variant="critical" />
+    </div>
+
+    <DiagnosisBlock
+      priority={1}
+      nanda="Ineffective Tissue Perfusion"
+      relatedTo="septic shock physiology causing distributive vasodilation, microvascular thrombosis, and inadequate cardiac output relative to tissue oxygen demand"
+      aeb="MAP 65, lactate 3.4 mmol/L, urine output 15 mL/hr, acute confusion (new), creatinine 1.9 vs. baseline 1.1, HR 118, BP 88/54"
+      color="var(--color-critical)"
+    >
+      <h4 style="margin:0.75rem 0 0.4rem;color:var(--color-primary);">SMART Goal</h4>
+      <p style="font-size:0.9rem;background:#f0f9f0;padding:0.6rem 0.8rem;border-radius:6px;">Patient will achieve MAP ≥65 mmHg and urine output ≥30 mL/hr within 2 hours of fluid resuscitation initiation; lactate will trend toward normal within 6 hours as evidenced by serial lactate measurements.</p>
+      <h4 style="margin:0.75rem 0 0.4rem;color:var(--color-primary);">Interventions — 1-Hour Sepsis Bundle</h4>
+      <ol style="font-size:0.9rem;line-height:1.9;padding-left:1.2rem;">
+        <li><strong>NOW:</strong> Obtain blood cultures ×2 from separate peripheral sites — do NOT delay antibiotics more than a few minutes for culture collection</li>
+        <li><strong>NOW:</strong> Administer IV ceftriaxone 1g (or per culture sensitivities) — source: UTI/bacteremia; note Cipro allergy</li>
+        <li><strong>NOW:</strong> Initiate 30 mL/kg crystalloid (0.9% NS or LR) bolus — approximately 1,500 mL for 50 kg patient</li>
+        <li>Reassess MAP after fluid bolus — if MAP &lt;65 after 1,500 mL, initiate Norepinephrine per order (first-line vasopressor)</li>
+        <li>Repeat lactate in 2 hours — rising lactate or persistent ≥4 = septic shock (escalate to ICU)</li>
+        <li>Insert Foley catheter for accurate hourly urine output monitoring</li>
+        <li>Continuous cardiac monitoring and vital signs q15 minutes during resuscitation</li>
+      </ol>
+    </DiagnosisBlock>
+
+    <DiagnosisBlock
+      priority={2}
+      nanda="Hyperthermia"
+      relatedTo="infectious process triggering systemic inflammatory response (gram-negative UTI bacteremia)"
+      aeb="T 38.9°C, HR 118, flushed appearance, diaphoresis, WBC 18,200 with bandemia"
+      color="var(--color-step-2)"
+    >
+      <h4 style="margin:0.75rem 0 0.4rem;color:var(--color-primary);">SMART Goal</h4>
+      <p style="font-size:0.9rem;background:#f0f9f0;padding:0.6rem 0.8rem;border-radius:6px;">Patient will achieve temperature ≤38°C within 4 hours of antipyretic and antibiotic administration; HR will decrease toward 90–100 as fever resolves.</p>
+      <h4 style="margin:0.75rem 0 0.4rem;color:var(--color-primary);">Interventions</h4>
+      <ol style="font-size:0.9rem;line-height:1.9;padding-left:1.2rem;">
+        <li>Administer acetaminophen 650 mg PO/PR as ordered (note: avoid NSAIDs — renal compromise)</li>
+        <li>Apply cooling blanket if temperature ≥39.5°C</li>
+        <li>Monitor temperature q2h; correlate with HR changes (HR should decrease as fever resolves)</li>
+        <li>Administer IV antibiotics as ordered — source control is the definitive fever treatment</li>
+        <li>Ensure adequate hydration — fever increases insensible losses; fluid resuscitation addresses both perfusion and dehydration</li>
+      </ol>
+    </DiagnosisBlock>
+
+    <DiagnosisBlock
+      priority={3}
+      nanda="Risk for Shock"
+      relatedTo="ongoing septic physiology with borderline MAP 65 and lactate 3.4 approaching septic shock threshold (lactate ≥4 or persistent hypotension despite IVF)"
+      aeb="MAP 65 (at threshold), lactate 3.4, HR 118, BP 88/54, urine output declining"
+      color="var(--color-step-3)"
+    >
+      <h4 style="margin:0.75rem 0 0.4rem;color:var(--color-primary);">SMART Goal</h4>
+      <p style="font-size:0.9rem;background:#f0f9f0;padding:0.6rem 0.8rem;border-radius:6px;">Patient will not progress to septic shock — MAP will remain ≥65 after IVF resuscitation without vasopressor requirement; if vasopressors are initiated, patient will achieve MAP ≥65 within 1 hour of initiation.</p>
+      <h4 style="margin:0.75rem 0 0.4rem;color:var(--color-primary);">Interventions</h4>
+      <ol style="font-size:0.9rem;line-height:1.9;padding-left:1.2rem;">
+        <li>Monitor MAP q15 min during resuscitation — alert provider immediately if MAP &lt;65 or drops &gt;10 from baseline</li>
+        <li>Prepare Norepinephrine infusion — have available at bedside; first-line vasopressor in septic shock</li>
+        <li>Central access if vasopressors initiated (peripheral is acceptable for initiation if central line delayed)</li>
+        <li>Assess for complications: ARDS (increasing O₂ requirements), DIC (bleeding), acute liver injury (rising AST/ALT)</li>
+        <li>If MAP does not respond to 30 mL/kg crystalloid — notify provider urgently; prepare for ICU transfer</li>
+        <li>Fall risk: acute confusion + hypotension = highest fall risk — bed alarm, one-on-one monitoring if available</li>
+      </ol>
+    </DiagnosisBlock>
+  </section>
+
+  <section class="case-section card fade-in">
+    <div class="step-header" style="border-color:var(--color-step-5);">
+      <span class="step-badge" style="background:var(--color-step-5);">5</span>
+      <h2>Evaluating Outcomes</h2>
+      <TutorialTrigger tutorialKey="evaluation-evidence" label="Objective Evaluations" />
+      <TutorialTrigger tutorialKey="feedback-loop" label="Reassessment Loop" />
+    </div>
+    <div style="display:grid;gap:1rem;">
+      <div class="eval-block" style="border-left:4px solid var(--color-step-4);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+          <strong>Dx 1: Ineffective Tissue Perfusion</strong>
+          <span class="eval-badge partial">Partially Met</span>
+        </div>
+        <p style="font-size:0.9rem;color:#444;">After 1,500 mL LR bolus at 1600: MAP improved to 68 (from 65). Urine output: 28 mL/hr (improved from 15). Repeat lactate at 1800: 2.6 mmol/L (trending down from 3.4). Patient slightly more responsive but still confused ×2. Blood cultures sent. IV ceftriaxone infusing. Norepinephrine not yet required. Continue monitoring — will reassess at 2100.</p>
+      </div>
+      <div class="eval-block" style="border-left:4px solid var(--color-step-4);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+          <strong>Dx 2: Hyperthermia</strong>
+          <span class="eval-badge met">Met</span>
+        </div>
+        <p style="font-size:0.9rem;color:#444;">Temperature decreased to 37.8°C 2 hours post-acetaminophen. HR improved from 118 to 102. Patient reports chills and sweating have decreased. Continue temperature monitoring q2h.</p>
+      </div>
+      <div class="eval-block" style="border-left:4px solid var(--color-step-4);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+          <strong>Dx 3: Risk for Shock</strong>
+          <span class="eval-badge partial">Ongoing Monitoring — Not Progressed</span>
+        </div>
+        <p style="font-size:0.9rem;color:#444;">Patient has not progressed to septic shock at this time — MAP maintained 68 post-fluid. Lactate trending down. Norepinephrine not initiated. Reassessment at 2100 with repeat lactate. If MAP drops or lactate rises, vasopressor initiation and ICU transfer per protocol.</p>
+      </div>
+    </div>
+  </section>
+
+  <style>
+    .case-section { margin-bottom: 1.75rem; }
+    .step-header { display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;margin-bottom:1rem;padding-bottom:0.75rem;border-bottom:2px solid; }
+    .step-header h2 { font-size:1.2rem;color:var(--color-primary);flex:1;min-width:150px; }
+    .step-badge { width:32px;height:32px;border-radius:50%;color:#fff;font-weight:700;font-size:0.95rem;display:flex;align-items:center;justify-content:center;flex-shrink:0; }
+    h3 { color:var(--color-primary);font-size:1rem;margin-bottom:0.5rem; }
+    ul, ol { padding-left:1.5rem;line-height:1.8;color:#444;font-size:0.92rem; }
+    h4 { font-size:0.95rem; }
+    .eval-block { background:#fafafa;border-radius:6px;padding:0.9rem 1rem; }
+    .eval-badge { font-size:0.75rem;font-weight:700;padding:0.2rem 0.7rem;border-radius:12px; }
+    .eval-badge.met { background:#27AE60;color:#fff; }
+    .eval-badge.partial { background:var(--color-warning);color:#fff; }
+    .eval-badge.notmet { background:var(--color-critical);color:#fff; }
+  </style>
+</CaseStudyLayout>

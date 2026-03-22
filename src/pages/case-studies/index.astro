@@ -1,0 +1,97 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const base = import.meta.env.BASE_URL;
+
+const cases = [
+  {
+    href: 'pneumonia',
+    title: 'Community-Acquired Pneumonia',
+    patient: '68-year-old female, T 101.8°F, SpO₂ 88%, RR 28',
+    focus: 'Impaired Gas Exchange, Ineffective Airway Clearance, Activity Intolerance',
+    icon: '🫁',
+    color: 'var(--color-step-1)',
+    tags: ['Respiratory', 'Oxygen', 'Antibiotics'],
+  },
+  {
+    href: 'chf',
+    title: 'Acute Decompensated Heart Failure',
+    patient: '72-year-old male, +3 pitting edema, BNP 1,240 pg/mL, SpO₂ 91%',
+    focus: 'Excess Fluid Volume, Decreased Cardiac Output, Activity Intolerance',
+    icon: '❤️',
+    color: 'var(--color-step-5)',
+    tags: ['Cardiac', 'Diuresis', 'Fluid Balance'],
+  },
+  {
+    href: 'sepsis',
+    title: 'Sepsis — UTI Source',
+    patient: '81-year-old female, HR 118, MAP 58, Lactate 3.4 mmol/L, WBC 18.2',
+    focus: 'Ineffective Tissue Perfusion, Hyperthermia, Risk for Shock',
+    icon: '🦠',
+    color: 'var(--color-critical)',
+    tags: ['Sepsis Bundle', 'Vasopressors', 'Antibiotics'],
+  },
+  {
+    href: 'copd',
+    title: 'COPD Exacerbation',
+    patient: '64-year-old male, SpO₂ 86%, PaCO₂ 58 mmHg, pH 7.31',
+    focus: 'Ineffective Airway Clearance, Impaired Gas Exchange, Anxiety',
+    icon: '💨',
+    color: 'var(--color-step-2)',
+    tags: ['Respiratory Acidosis', 'Venturi Mask', 'BiPAP'],
+  },
+  {
+    href: 'parkinsons',
+    title: "Parkinson's Disease — Acute Hospitalization",
+    patient: "74-year-old male, admitted for fall/hip fracture, 3-hour Carbidopa-Levodopa delay on admission",
+    focus: 'Impaired Physical Mobility, Risk for Aspiration, Risk for Falls',
+    icon: '🧠',
+    color: 'var(--color-step-3)',
+    tags: ['Medication Timing', 'Dysphagia', 'Fall Risk'],
+  },
+];
+---
+<Layout title="Case Studies" description="Worked clinical concept map case studies for nursing students — Pneumonia, CHF, Sepsis, COPD, Parkinson's Disease.">
+  <!-- Header -->
+  <section style="background:var(--color-primary);color:#fff;padding:3rem 1rem 2.5rem;text-align:center;">
+    <div style="max-width:720px;margin:0 auto;">
+      <h1 style="font-size:clamp(1.8rem,4vw,2.8rem);margin-bottom:0.75rem;">Clinical Case Studies</h1>
+      <p style="color:rgba(255,255,255,0.85);font-size:1.05rem;line-height:1.7;">
+        Five complete, worked concept maps covering the most clinically significant conditions for nursing students. Each case includes full pathophysiology, cue analysis, NANDA diagnoses, SMART goals, and evaluation.
+      </p>
+    </div>
+  </section>
+
+  <div style="max-width:1000px;margin:0 auto;padding:3rem 1rem;">
+    <div style="display:grid;gap:1.5rem;">
+      {cases.map(c => (
+        <a href={`${base}case-studies/${c.href}`} style="text-decoration:none;display:block;" class="case-card card fade-in" style={`border-left:6px solid ${c.color};`}>
+          <div style="display:flex;align-items:flex-start;gap:1.25rem;flex-wrap:wrap;">
+            <div style="font-size:2.5rem;flex-shrink:0;">{c.icon}</div>
+            <div style="flex:1;min-width:200px;">
+              <h2 style={`color:${c.color};font-size:1.2rem;margin-bottom:0.35rem;`}>{c.title}</h2>
+              <p style="font-size:0.88rem;color:#666;margin-bottom:0.5rem;">👤 {c.patient}</p>
+              <p style="font-size:0.9rem;color:#444;margin-bottom:0.75rem;"><strong>Key diagnoses:</strong> {c.focus}</p>
+              <div style="display:flex;flex-wrap:wrap;gap:0.4rem;">
+                {c.tags.map(tag => (
+                  <span style={`background:${c.color}22;color:${c.color};font-size:0.75rem;font-weight:600;padding:0.2rem 0.55rem;border-radius:12px;`}>{tag}</span>
+                ))}
+              </div>
+            </div>
+            <div style="align-self:center;font-size:1.5rem;color:#bbb;">→</div>
+          </div>
+        </a>
+      ))}
+    </div>
+
+    <div style="text-align:center;margin-top:3rem;padding:2rem;background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+      <p style="color:#555;margin-bottom:1rem;">Ready to build your own concept map?</p>
+      <a href={`${base}builder`} class="btn btn-accent">Open the Builder →</a>
+    </div>
+  </div>
+
+  <style>
+    .case-card { transition: box-shadow 0.2s, transform 0.15s; }
+    .case-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.12); transform: translateY(-2px); }
+  </style>
+</Layout>

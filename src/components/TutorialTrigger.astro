@@ -1,0 +1,24 @@
+---
+/**
+ * TutorialTrigger.astro - Reusable tutorial trigger button
+ * Props:
+ *   key: string - tutorial key in window.ClinicalTutorials
+ *   label: string - visible label text
+ *   variant: 'default' | 'warning' | 'critical'
+ */
+interface Props {
+  tutorialKey: string;
+  label?: string;
+  variant?: 'default' | 'warning' | 'critical';
+}
+const { tutorialKey, label = 'Clinical Insight', variant = 'default' } = Astro.props;
+---
+<button
+  class={`tutorial-trigger${variant !== 'default' ? ' ' + variant : ''}`}
+  data-tutorial={tutorialKey}
+  aria-label={`Learn more: ${label}`}
+  aria-haspopup="dialog"
+>
+  <span class="tutorial-icon">?</span>
+  <span class="tutorial-label">{label}</span>
+</button>

@@ -1,0 +1,164 @@
+---
+import Layout from '../layouts/Layout.astro';
+import StepCard from '../components/StepCard.astro';
+import ConceptMapFlow from '../components/ConceptMapFlow.astro';
+import TipBox from '../components/TipBox.astro';
+import TutorialTrigger from '../components/TutorialTrigger.astro';
+
+const base = import.meta.env.BASE_URL;
+---
+<Layout
+  title="Home"
+  description="Clinical Concept Map Builder — a comprehensive tool for nursing students to practice clinical judgment using the NGN framework."
+>
+  <!-- Hero -->
+  <section style="
+    background: var(--color-primary);
+    background-image: url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M0 0h40v1H0zM0 0v40h1V0z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\");
+    color: #fff;
+    padding: 5rem 1rem 4rem;
+    text-align: center;
+  ">
+    <div style="max-width: 780px; margin: 0 auto;">
+      <p style="font-size:0.85rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--color-highlight);margin-bottom:1rem;">NGN Clinical Judgment Framework</p>
+      <h1 style="font-size:clamp(2rem,5vw,3.2rem);line-height:1.1;margin-bottom:1.25rem;">
+        Master Clinical Judgment.<br>Build Better Concept Maps.
+      </h1>
+      <p style="font-size:1.1rem;color:rgba(255,255,255,0.85);max-width:600px;margin:0 auto 2rem;line-height:1.7;">
+        A structured, evidence-based tool for nursing students to practice the 5-step clinical reasoning process — built around the NGN framework and real patient scenarios.
+      </p>
+      <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+        <a href={`${base}builder`} class="btn" style="background:var(--color-highlight);color:var(--color-primary);font-size:1.05rem;padding:0.75rem 1.75rem;">
+          Open Builder →
+        </a>
+        <a href={`${base}case-studies`} class="btn btn-outline" style="border-color:rgba(255,255,255,0.5);color:#fff;font-size:1.05rem;padding:0.75rem 1.75rem;">
+          View Case Studies
+        </a>
+      </div>
+      <div style="margin-top:1.5rem;">
+        <TutorialTrigger tutorialKey="ngn-model" label="What is the NGN Model?" />
+      </div>
+    </div>
+  </section>
+
+  <!-- 5-Step Flow -->
+  <section style="max-width:1100px;margin:0 auto;padding:3rem 1rem;">
+    <div style="text-align:center;margin-bottom:2rem;">
+      <h2 style="color:var(--color-primary);font-size:1.8rem;">The 5-Step Clinical Judgment Framework</h2>
+      <p style="color:#666;margin-top:0.5rem;">Every concept map follows this evidence-based process aligned with the NCSBN NGN model.</p>
+    </div>
+    <ConceptMapFlow />
+  </section>
+
+  <!-- Step Cards Grid -->
+  <section style="max-width:1100px;margin:0 auto;padding:0 1rem 3rem;">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.25rem;">
+      <StepCard
+        stepNumber={1}
+        title="Recognize Cues"
+        description="Collect objective and subjective data. Identify abnormal findings and vital sign patterns."
+        color="var(--color-step-1)"
+        icon="🔍"
+      />
+      <StepCard
+        stepNumber={2}
+        title="Analyze Cues"
+        description="Sort findings into supporting vs. concerning data. Identify pathophysiology links."
+        color="var(--color-step-2)"
+        icon="🧩"
+      />
+      <StepCard
+        stepNumber={3}
+        title="Prioritize Hypotheses"
+        description="Rank nursing diagnoses using the ABC framework and Maslow's hierarchy."
+        color="var(--color-step-3)"
+        icon="⚖️"
+      />
+      <StepCard
+        stepNumber={4}
+        title="Generate Solutions"
+        description="Write SMART goals and select evidence-based nursing interventions per diagnosis."
+        color="var(--color-step-4)"
+        icon="📋"
+      />
+      <StepCard
+        stepNumber={5}
+        title="Evaluate Outcomes"
+        description="Measure patient response with objective findings. Revise the plan as needed."
+        color="var(--color-step-5)"
+        icon="✅"
+      />
+    </div>
+  </section>
+
+  <!-- Features / Why Use This -->
+  <section style="background:#fff;padding:3rem 1rem;">
+    <div style="max-width:1100px;margin:0 auto;">
+      <div style="text-align:center;margin-bottom:2rem;">
+        <h2 style="color:var(--color-primary);font-size:1.8rem;">Everything You Need to Practice Clinical Judgment</h2>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.5rem;">
+        <div class="card fade-in">
+          <div style="font-size:2rem;margin-bottom:0.75rem;">📚</div>
+          <h3 style="color:var(--color-primary);margin-bottom:0.5rem;">24 Clinical Tutorials</h3>
+          <p style="font-size:0.9rem;color:#555;">In-context lightbox tutorials on every major clinical concept — from ABG interpretation to the sepsis bundle, accessible on every page.</p>
+        </div>
+        <div class="card fade-in">
+          <div style="font-size:2rem;margin-bottom:0.75rem;">🏥</div>
+          <h3 style="color:var(--color-primary);margin-bottom:0.5rem;">5 Detailed Case Studies</h3>
+          <p style="font-size:0.9rem;color:#555;">Complete worked concept maps for Pneumonia, CHF, Sepsis, COPD, and Parkinson's Disease — with pathophysiology, diagnoses, and interventions.</p>
+        </div>
+        <div class="card fade-in">
+          <div style="font-size:2rem;margin-bottom:0.75rem;">🛠️</div>
+          <h3 style="color:var(--color-primary);margin-bottom:0.5rem;">Interactive Builder</h3>
+          <p style="font-size:0.9rem;color:#555;">8-tab concept map builder with auto-suggestions for 20 conditions, ABG interpreter, NANDA validator, SMART goal helper, and auto-save.</p>
+        </div>
+        <div class="card fade-in">
+          <div style="font-size:2rem;margin-bottom:0.75rem;">🔬</div>
+          <h3 style="color:var(--color-primary);margin-bottom:0.5rem;">Lab Normal Reference</h3>
+          <p style="font-size:0.9rem;color:#555;">Inline normal ranges for every major lab panel — CBCs, CMPs, ABGs, cardiac markers, coags — with auto-flagging of critical values.</p>
+        </div>
+        <div class="card fade-in">
+          <div style="font-size:2rem;margin-bottom:0.75rem;">🖨️</div>
+          <h3 style="color:var(--color-primary);margin-bottom:0.5rem;">Print-Ready Output</h3>
+          <p style="font-size:0.9rem;color:#555;">One-click print or save as PDF with clean, assignment-ready formatting. Works completely offline after first load.</p>
+        </div>
+        <div class="card fade-in">
+          <div style="font-size:2rem;margin-bottom:0.75rem;">⚡</div>
+          <h3 style="color:var(--color-primary);margin-bottom:0.5rem;">Smart Alerts</h3>
+          <p style="font-size:0.9rem;color:#555;">Condition-specific safety alerts fire automatically — COPD O₂ targets, Parkinson's medication timing, sepsis bundle reminders, fall risk.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Case Studies Preview -->
+  <section style="max-width:1100px;margin:0 auto;padding:3rem 1rem;">
+    <div style="text-align:center;margin-bottom:2rem;">
+      <h2 style="color:var(--color-primary);font-size:1.8rem;">Worked Case Studies</h2>
+      <p style="color:#666;margin-top:0.5rem;">Study complete concept maps for the most clinically important conditions.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;">
+      {[
+        { href: 'case-studies/pneumonia', label: 'Community-Acquired Pneumonia', icon: '🫁', color: 'var(--color-step-1)' },
+        { href: 'case-studies/chf', label: 'Acute Decompensated CHF', icon: '❤️', color: 'var(--color-step-5)' },
+        { href: 'case-studies/sepsis', label: 'Sepsis — UTI Source', icon: '🦠', color: 'var(--color-critical)' },
+        { href: 'case-studies/copd', label: 'COPD Exacerbation', icon: '💨', color: 'var(--color-step-2)' },
+        { href: 'case-studies/parkinsons', label: "Parkinson's Disease", icon: '🧠', color: 'var(--color-step-3)' },
+      ].map(c => (
+        <a href={`${base}${c.href}`} class="card" style={`border-top:4px solid ${c.color};text-align:center;cursor:pointer;transition:transform 0.15s;display:block;`}>
+          <div style="font-size:2rem;margin-bottom:0.5rem;">{c.icon}</div>
+          <p style={`font-weight:600;font-size:0.9rem;color:${c.color};`}>{c.label}</p>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- Quick NGN Tip -->
+  <section style="max-width:1100px;margin:0 auto;padding:0 1rem 3rem;">
+    <TipBox type="tip" title="NGN Exam Tip">
+      The Next Generation NCLEX tests clinical judgment, not memorization. Every question type (bow-tie, matrix, extended drag-and-drop) maps directly to one of the 5 cognitive skills practiced in this builder.
+      <TutorialTrigger tutorialKey="ngn-model" label="Full NGN Tutorial" />
+    </TipBox>
+  </section>
+</Layout>

@@ -1,0 +1,100 @@
+---
+/**
+ * CaseStudyLayout.astro - Layout for all case study pages
+ * Props: title, description, patient (object with demographics)
+ */
+import Layout from './Layout.astro';
+
+interface PatientInfo {
+  initials: string;
+  age: number;
+  sex: string;
+  admitDx: string;
+  hpi: string;
+  pmh: string[];
+  meds: string[];
+  allergies: string;
+  vitals: Record<string, string>;
+}
+
+interface Props {
+  title: string;
+  description?: string;
+  patient: PatientInfo;
+}
+
+const { title, description, patient } = Astro.props;
+---
+<Layout title={title} description={description}>
+  <div style="max-width:1100px;margin:0 auto;padding:2rem 1rem;">
+    <!-- Page Header -->
+    <div style="margin-bottom:2rem;">
+      <a href="../case-studies" style="color:var(--color-accent);font-size:0.9rem;">← All Case Studies</a>
+      <h1 style="margin-top:0.5rem;font-size:2rem;color:var(--color-primary);">{title}</h1>
+    </div>
+
+    <div style="display:grid;grid-template-columns:280px 1fr;gap:2rem;align-items:start;">
+      <!-- Patient Info Sidebar -->
+      <aside>
+        <div class="card" style="position:sticky;top:80px;">
+          <h2 style="font-size:1rem;color:var(--color-primary);margin-bottom:1rem;border-bottom:2px solid var(--color-accent);padding-bottom:0.5rem;">Patient Profile</h2>
+          
+          <div style="display:grid;gap:0.6rem;font-size:0.9rem;">
+            <div><span style="font-weight:600;color:#555;">Initials:</span> {patient.initials}</div>
+            <div><span style="font-weight:600;color:#555;">Age:</span> {patient.age}</div>
+            <div><span style="font-weight:600;color:#555;">Sex:</span> {patient.sex}</div>
+            <div><span style="font-weight:600;color:#555;">Diagnosis:</span> {patient.admitDx}</div>
+          </div>
+
+          <h3 style="font-size:0.9rem;color:var(--color-primary);margin:1rem 0 0.5rem;">HPI</h3>
+          <p style="font-size:0.85rem;color:#444;line-height:1.5;">{patient.hpi}</p>
+
+          <h3 style="font-size:0.9rem;color:var(--color-primary);margin:1rem 0 0.5rem;">Past Medical History</h3>
+          <ul style="font-size:0.85rem;color:#444;padding-left:1.2rem;">
+            {patient.pmh.map(h => <li>{h}</li>)}
+          </ul>
+
+          <h3 style="font-size:0.9rem;color:var(--color-primary);margin:1rem 0 0.5rem;">Current Medications</h3>
+          <ul style="font-size:0.85rem;color:#444;padding-left:1.2rem;">
+            {patient.meds.map(m => <li>{m}</li>)}
+          </ul>
+
+          <h3 style="font-size:0.9rem;color:var(--color-primary);margin:1rem 0 0.5rem;">Allergies</h3>
+          <p style="font-size:0.85rem;color:#444;">{patient.allergies}</p>
+
+          <h3 style="font-size:0.9rem;color:var(--color-primary);margin:1rem 0 0.5rem;">Admission Vitals</h3>
+          <div style="display:grid;gap:0.35rem;">
+            {Object.entries(patient.vitals).map(([k, v]) => (
+              <div style="display:flex;justify-content:space-between;font-size:0.82rem;padding:0.2rem 0;border-bottom:1px solid #f0f0f0;">
+                <span style="color:#555;">{k}</span>
+                <span style="font-weight:600;">{v}</span>
+              </div>
+            ))}
+          </div>
+
+          <div style="margin-top:1.25rem;padding-top:1rem;border-top:1px solid #eee;">
+            <a href="../builder" class="btn btn-accent" style="width:100%;justify-content:center;font-size:0.85rem;">
+              Use This Case in Builder →
+            </a>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Concept Map Content -->
+      <main>
+        <slot />
+      </main>
+    </div>
+  </div>
+
+  <style>
+    @media (max-width: 768px) {
+      div[style*="grid-template-columns"] {
+        grid-template-columns: 1fr !important;
+      }
+      aside .card {
+        position: static !important;
+      }
+    }
+  </style>
+</Layout>

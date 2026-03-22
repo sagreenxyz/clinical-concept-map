@@ -1,0 +1,158 @@
+---
+import Layout from '../layouts/Layout.astro';
+import TutorialTrigger from '../components/TutorialTrigger.astro';
+import TipBox from '../components/TipBox.astro';
+import ConceptMapFlow from '../components/ConceptMapFlow.astro';
+
+const base = import.meta.env.BASE_URL;
+
+const steps = [
+  {
+    n: 1,
+    title: 'Disease Process & Pathophysiology',
+    color: 'var(--color-step-1)',
+    icon: '🧬',
+    desc: 'Document the underlying disease mechanism, risk factors, and how the pathophysiology explains your patient\'s presentation.',
+    tips: [
+      'Connect the disease mechanism directly to your patient\'s specific findings.',
+      'Include modifying factors: age, comorbidities, medication effects.',
+      'Avoid generic textbook descriptions — explain why THIS patient presents this way.',
+    ],
+    tutorial: { key: 'pathophysiology-why', label: 'Why Pathophysiology First?' },
+  },
+  {
+    n: 2,
+    title: 'Recognizing Cues',
+    color: 'var(--color-step-2)',
+    icon: '🔍',
+    desc: 'Systematically collect all objective and subjective data. Flag abnormal values against normal ranges.',
+    tips: [
+      'Read the MAR as a clinical cue — medications tell you what\'s wrong with the patient.',
+      'Include what the patient reports — subjective data can be the earliest warning sign.',
+      'Note the trend, not just the single value (rising creatinine over 3 days means more than one abnormal reading).',
+    ],
+    tutorial: { key: 'objective-vs-subjective', label: 'Objective vs. Subjective Data' },
+  },
+  {
+    n: 3,
+    title: 'Analyzing Cues',
+    color: 'var(--color-step-3)',
+    icon: '🧩',
+    desc: 'Separate findings into supporting data (expected for the diagnosis) and concerning data (unexpected, worsening, or signaling a complication).',
+    tips: [
+      'A finding can belong in BOTH columns — elevated WBC in sepsis supports the diagnosis AND signals severity.',
+      'Concerning data should drive your priority diagnoses.',
+      'Ask: is this finding expected for my primary diagnosis, or does it suggest something else is happening?',
+    ],
+    tutorial: { key: 'supporting-vs-concerning', label: 'Supporting vs. Concerning Data' },
+  },
+  {
+    n: 4,
+    title: 'Prioritizing Hypotheses & Taking Actions',
+    color: 'var(--color-step-4)',
+    icon: '⚖️',
+    desc: 'Rank nursing diagnoses using ABC + Maslow. Write NANDA diagnoses with all 3 required parts. Pair each with SMART goals and evidence-based interventions.',
+    tips: [
+      'Airway → Breathing → Circulation always takes priority over non-physiologic diagnoses.',
+      'SMART goals must be from the PATIENT\'s perspective, not the nurse\'s.',
+      'Goals must be measurable — include a number, scale, or observable action.',
+    ],
+    tutorials: [
+      { key: 'abc-priority', label: 'ABC Priority Framework' },
+      { key: 'nanda-format', label: 'NANDA Format Guide' },
+      { key: 'smart-goals', label: 'Writing SMART Goals' },
+    ],
+  },
+  {
+    n: 5,
+    title: 'Evaluating Outcomes',
+    color: 'var(--color-step-5)',
+    icon: '✅',
+    desc: 'Document objective evidence of whether each SMART goal was met. If not met, revise the plan. Then reassess — evaluation feeds back into cue recognition.',
+    tips: [
+      '"Patient improved" is NOT an evaluation. State the specific objective finding.',
+      'If a goal was not met, document what changed, why you think it wasn\'t met, and what you\'d revise.',
+      'After evaluation, loop back — are there new cues? Has the priority shifted?',
+    ],
+    tutorials: [
+      { key: 'evaluation-evidence', label: 'Writing Objective Evaluations' },
+      { key: 'feedback-loop', label: 'The Reassessment Loop' },
+    ],
+  },
+];
+---
+<Layout title="How to Use" description="Learn how to use the Clinical Concept Map framework — the 5-step NGN clinical judgment process.">
+  <!-- Header -->
+  <section style="background:var(--color-primary);color:#fff;padding:3rem 1rem 2.5rem;text-align:center;">
+    <div style="max-width:760px;margin:0 auto;">
+      <h1 style="font-size:clamp(1.8rem,4vw,2.8rem);margin-bottom:0.75rem;">How to Use the Concept Map</h1>
+      <p style="color:rgba(255,255,255,0.85);font-size:1.05rem;line-height:1.7;">
+        A step-by-step walkthrough of the 5-step clinical judgment framework — aligned with the NGN model and designed to prepare you for both real patient care and the new NCLEX.
+      </p>
+    </div>
+  </section>
+
+  <div style="max-width:900px;margin:0 auto;padding:3rem 1rem;">
+    <!-- Flow Overview -->
+    <div style="margin-bottom:3rem;">
+      <h2 style="color:var(--color-primary);text-align:center;margin-bottom:1.5rem;">The 5-Step Process at a Glance</h2>
+      <ConceptMapFlow />
+      <div style="text-align:center;margin-top:1rem;">
+        <TutorialTrigger tutorialKey="ngn-model" label="NGN Model Overview" />
+      </div>
+    </div>
+
+    <!-- Step-by-step guide -->
+    {steps.map(step => (
+      <section class="fade-in" style={`border-left:5px solid ${step.color};padding:1.5rem 1.5rem;background:#fff;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.07);margin-bottom:2rem;`}>
+        <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
+          <span style={`background:${step.color};color:#fff;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1rem;flex-shrink:0;`}>{step.n}</span>
+          <span style="font-size:1.5rem;">{step.icon}</span>
+          <h2 style={`color:${step.color};font-size:1.25rem;`}>{step.title}</h2>
+        </div>
+        <p style="color:#444;margin-bottom:1rem;line-height:1.7;">{step.desc}</p>
+        <ul style="margin-left:1.25rem;color:#555;font-size:0.92rem;line-height:1.8;">
+          {step.tips.map(t => <li>{t}</li>)}
+        </ul>
+        <div style="margin-top:1rem;display:flex;flex-wrap:wrap;gap:0.5rem;">
+          {step.tutorial && <TutorialTrigger tutorialKey={step.tutorial.key} label={step.tutorial.label} />}
+          {step.tutorials && step.tutorials.map((t: {key: string, label: string}) => (
+            <TutorialTrigger tutorialKey={t.key} label={t.label} />
+          ))}
+        </div>
+      </section>
+    ))}
+
+    <!-- NGN Tip -->
+    <TipBox type="tip" title="NGN Exam Connection">
+      Each step corresponds directly to an NGN cognitive skill tested on the Next Generation NCLEX. Bow-tie questions test steps 2–3. Matrix questions test steps 4–5. Extended drag-and-drop covers the full cycle. Practicing this framework prepares you for every NGN question type.
+    </TipBox>
+
+    <!-- Common Mistakes -->
+    <section style="margin-top:3rem;">
+      <h2 style="color:var(--color-primary);margin-bottom:1.5rem;">Common Mistakes to Avoid</h2>
+      <div style="display:grid;gap:1rem;">
+        {[
+          { mistake: 'Writing a medical diagnosis as the nursing diagnosis', fix: '"Pneumonia" is not a nursing diagnosis. Use "Impaired Gas Exchange r/t alveolar consolidation AEB O₂ sat 88%."', key: 'nanda-format' },
+          { mistake: 'Generic pathophysiology', fix: 'Don\'t write a textbook definition. Explain why THIS patient presents THIS way given their age, comorbidities, and history.', key: 'pathophysiology-why' },
+          { mistake: 'Writing goals from the nurse\'s perspective', fix: '"Nurse will monitor O₂ sat" is an intervention, not a goal. Goals must start with "Patient will..."', key: 'smart-goals' },
+          { mistake: 'Vague evaluation statements', fix: '"Patient improved" is not acceptable. Write specific objective values: "O₂ sat improved from 88% to 94% on 2L NC after repositioning."', key: 'evaluation-evidence' },
+          { mistake: 'Titrating O₂ to ≥95% in a COPD patient', fix: 'COPD exacerbation target is 88–92%. Over-oxygenation can suppress the hypoxic drive and worsen respiratory failure.', key: 'oxygen-targets', variant: 'critical' },
+        ].map(item => (
+          <div class="card" style="border-left:4px solid var(--color-critical);">
+            <p style="font-weight:700;color:var(--color-critical);margin-bottom:0.4rem;">✗ {item.mistake}</p>
+            <p style="font-size:0.9rem;color:#444;margin-bottom:0.5rem;">✓ {item.fix}</p>
+            <TutorialTrigger tutorialKey={item.key} label="Learn More" variant={item.variant as any || 'default'} />
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <div style="text-align:center;margin-top:3rem;padding:2rem;background:var(--color-primary);border-radius:12px;color:#fff;">
+      <h2 style="margin-bottom:0.75rem;">Ready to Build?</h2>
+      <p style="color:rgba(255,255,255,0.85);margin-bottom:1.5rem;">Open the interactive builder to create your own concept map with guided suggestions and real-time feedback.</p>
+      <a href={`${base}builder`} class="btn" style="background:var(--color-highlight);color:var(--color-primary);font-size:1.05rem;padding:0.75rem 1.75rem;">Open Builder →</a>
+    </div>
+  </div>
+</Layout>
